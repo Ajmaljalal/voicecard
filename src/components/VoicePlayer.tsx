@@ -9,7 +9,6 @@ interface VoicePlayerProps {
 }
 
 const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -28,7 +27,6 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
       );
       if (isMounted) {
         soundRef.current = newSound;
-        setSound(newSound);
       }
     };
 
@@ -120,8 +118,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   playButton: {
-    opacity: 0.8,
-    padding: 8,
     height: 50,
     width: 50,
     borderRadius: 25,

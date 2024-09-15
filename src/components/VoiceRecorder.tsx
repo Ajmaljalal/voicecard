@@ -194,6 +194,11 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     flexDirection: 'row',
     gap: 10,
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    padding: 20,
+    borderRadius: 10,
+    marginHorizontal: 20,
   },
   button: {
     width: 70,
@@ -204,7 +209,6 @@ const styles = StyleSheet.create({
   },
   recordButton: {
     backgroundColor: COLORS.red,
-    opacity: 0.8,
   },
   stopButton: {
     backgroundColor: COLORS.red,
