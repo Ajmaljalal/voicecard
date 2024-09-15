@@ -14,41 +14,55 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
 
+  const getAndPlayVoiceMessage = async () => {
+    const { sound: newSound } = await Audio.Sound.createAsync(
+      { uri: audioUrl },
+      {
+        shouldPlay: false,
+        progressUpdateIntervalMillis: 100,
+        positionMillis: 0,
+      },
+      (status) => {
+        if (status.isLoaded) {
+          setPosition(status.positionMillis);
+          setDuration(status.durationMillis || 0);
+          if (status.didJustFinish) {
+            setIsPlaying(false);
+            newSound.setPositionAsync(0);
+          }
+        }
+      }
+    );
+    newSound.setPositionAsync(2000);
+    return newSound;
+  };
+
   useEffect(() => {
+    getAndPlayVoiceMessage().then((newSound) => {
+      setSound(newSound);
+    });
     return () => {
       if (sound) {
+        sound.pauseAsync();
         sound.unloadAsync();
       }
     };
-  }, [sound]);
+  }, [audioUrl]);
 
   const togglePlayback = async () => {
     try {
       if (sound) {
+        console.log('sound exists')
         if (isPlaying) {
           await sound.pauseAsync();
+          setIsPlaying(false);
         } else {
           await sound.playAsync();
+          setIsPlaying(true);
         }
-        setIsPlaying(!isPlaying);
       } else {
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          { uri: audioUrl },
-          { shouldPlay: true },
-          (status) => {
-            if (!status.isLoaded) {
-              setIsPlaying(false);
-            } else {
-              setPosition(status.positionMillis);
-              setDuration(status.durationMillis || 0);
-              if (status.didJustFinish) {
-                setIsPlaying(false);
-                newSound.setPositionAsync(0);
-              }
-            }
-          }
-        );
-
+        const newSound = await getAndPlayVoiceMessage();
+        await newSound.playAsync();
         setSound(newSound);
         setIsPlaying(true);
       }
@@ -62,25 +76,20 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
     const progressIndex = Math.floor((progressPercentage / 100) * 78);
 
     return (
-      <View>
-        <View style={styles.waveformContainer}>
-          {[...Array(80)].map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.waveformBar,
-                {
-                  height: Math.random() * 20 + 5,
-                  backgroundColor: index < progressIndex ? COLORS.red : COLORS.muted
-                }
-              ]}
-            />
-          ))}
-        </View>
-        <View style={styles.waveformProgress}>
-          <Text style={styles.timeText}>{Math.floor(position / 1000)}</Text>
-          <Text style={styles.timeText}>{Math.floor(duration / 1000)}</Text>
-        </View>
+      <View style={styles.waveformContainer}>
+        {[...Array(76)].map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.waveformBar,
+              {
+                height: Math.random() * 20 + 5,
+                backgroundColor: index < progressIndex ? COLORS.red : 'lightgray'
+              }
+            ]}
+          />
+        ))}
+
       </View>
     );
   };
@@ -88,9 +97,13 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
   return (
     <View style={styles.playerContainer}>
       {renderWaveform()}
-      <TouchableOpacity onPress={togglePlayback} style={styles.playButton}>
-        <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.card} />
-      </TouchableOpacity>
+      <View style={styles.waveformProgress}>
+        <Text style={styles.timeText}>{Math.floor(position / 1000 / 60)}:{Math.floor(position / 1000) % 60}</Text>
+        <TouchableOpacity onPress={togglePlayback} style={styles.playButton}>
+          <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.red} />
+        </TouchableOpacity>
+        <Text style={styles.timeText}>{Math.floor(duration / 1000 / 60)}:{Math.floor(duration / 1000) % 60}</Text>
+      </View>
     </View>
   );
 };
@@ -119,14 +132,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   playButton: {
-    backgroundColor: COLORS.red,
     opacity: 0.8,
     padding: 8,
-    height: 60,
-    width: 60,
-    borderRadius: 30,
+    height: 50,
+    width: 50,
+    borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.red,
   },
   timeText: {
     fontSize: 12,
@@ -136,6 +150,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    alignItems: 'center',
   },
 });
 

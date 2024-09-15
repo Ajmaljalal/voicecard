@@ -27,7 +27,7 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ author, audioUrl, title, descript
 const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: COLORS.background,
-    padding: 16,
+    padding: 24,
     borderRadius: 16,
     shadowColor: COLORS.dark,
     shadowOffset: { width: 0, height: 1 },
