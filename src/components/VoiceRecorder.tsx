@@ -75,6 +75,9 @@ const VoiceRecorder: React.FC = () => {
           description: 'New Voice Card Description',
         };
         dispatch(addVoiceCard(newVoiceCard));
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+        });
         Alert.alert('Recording Saved', 'Your voice message has been recorded.');
       }
     } catch (err) {

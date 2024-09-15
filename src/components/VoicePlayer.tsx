@@ -52,7 +52,12 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
       if (isPlaying) {
         await soundRef.current.pauseAsync();
       } else {
-        await soundRef.current.playAsync();
+        const status = await soundRef.current.getStatusAsync();
+        if (status.isLoaded && status.didJustFinish) {
+          await soundRef.current.replayAsync();
+        } else {
+          await soundRef.current.playAsync();
+        }
       }
     }
   };
