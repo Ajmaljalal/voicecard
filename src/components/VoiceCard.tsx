@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../../constants/Colors';
+import { COLORS } from '../constants/Colors';
 import VoicePlayer from './VoicePlayer';
 
 interface VoiceCardProps {
@@ -16,9 +16,11 @@ interface VoiceCardProps {
 const VoiceCard: React.FC<VoiceCardProps> = ({ author, audioUrl, title, description }) => {
   return (
     <View style={styles.cardContainer}>
-      <Text style={styles.author}>{author}</Text>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <View style={styles.cardTextContainer}>
+        <Text style={styles.author}>{author}</Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.description}>{description}</Text>
+      </View>
       <VoicePlayer audioUrl={audioUrl} />
     </View>
   );
@@ -38,6 +40,9 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: 'lightgray',
   },
+  cardTextContainer: {
+    flex: 1,
+  },
   author: {
     fontSize: 14,
     fontWeight: '400',
@@ -48,13 +53,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: COLORS.text,
-    marginBottom: 16,
+    marginBottom: 8
   },
   description: {
     fontSize: 14,
     fontWeight: '400',
     color: COLORS.text,
-    marginBottom: 32,
   },
 });
 

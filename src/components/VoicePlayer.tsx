@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { Audio } from 'expo-av';
-import { COLORS } from '../../constants/Colors';
+import { Audio, AVPlaybackStatus } from 'expo-av';
+import { COLORS } from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 
 interface VoicePlayerProps {
@@ -13,61 +13,49 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
-
-  const getAndPlayVoiceMessage = async () => {
-    const { sound: newSound } = await Audio.Sound.createAsync(
-      { uri: audioUrl },
-      {
-        shouldPlay: false,
-        progressUpdateIntervalMillis: 100,
-        positionMillis: 0,
-      },
-      (status) => {
-        if (status.isLoaded) {
-          setPosition(status.positionMillis);
-          setDuration(status.durationMillis || 0);
-          if (status.didJustFinish) {
-            setIsPlaying(false);
-            newSound.setPositionAsync(0);
-          }
-        }
-      }
-    );
-    newSound.setPositionAsync(2000);
-    return newSound;
-  };
+  const soundRef = useRef<Audio.Sound | null>(null);
 
   useEffect(() => {
-    getAndPlayVoiceMessage().then((newSound) => {
-      setSound(newSound);
-    });
+    let isMounted = true;
+    const loadSound = async () => {
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+      }
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri: audioUrl },
+        { shouldPlay: false },
+        onPlaybackStatusUpdate
+      );
+      if (isMounted) {
+        soundRef.current = newSound;
+        setSound(newSound);
+      }
+    };
+
+    loadSound();
     return () => {
-      if (sound) {
-        sound.pauseAsync();
-        sound.unloadAsync();
+      isMounted = false;
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
       }
     };
   }, [audioUrl]);
 
+  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
+    if (status.isLoaded) {
+      setPosition(status.positionMillis);
+      setDuration(status.durationMillis || 0);
+      setIsPlaying(status.isPlaying);
+    }
+  };
+
   const togglePlayback = async () => {
-    try {
-      if (sound) {
-        console.log('sound exists')
-        if (isPlaying) {
-          await sound.pauseAsync();
-          setIsPlaying(false);
-        } else {
-          await sound.playAsync();
-          setIsPlaying(true);
-        }
+    if (soundRef.current) {
+      if (isPlaying) {
+        await soundRef.current.pauseAsync();
       } else {
-        const newSound = await getAndPlayVoiceMessage();
-        await newSound.playAsync();
-        setSound(newSound);
-        setIsPlaying(true);
+        await soundRef.current.playAsync();
       }
-    } catch (error) {
-      console.error('Error in togglePlayback:', error);
     }
   };
 

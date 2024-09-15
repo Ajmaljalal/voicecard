@@ -4,8 +4,8 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { Provider } from 'react-redux';
-import { store } from '@/src/store';
 import { COLORS } from '@/src/constants/Colors';
+import { store } from '@/src/store/store';
 
 
 export default function RootLayout() {

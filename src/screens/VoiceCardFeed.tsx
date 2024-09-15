@@ -1,24 +1,15 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import React, { useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
-import VoiceCard from '../components/voicecard/VoiceCard';
+import VoiceCard from '../components/VoiceCard';
 import { useVoiceCards } from '../hooks/useVoiceCard';
-import { useDispatch } from 'react-redux';
-import { setVoiceCards } from '../store/voice-cards';
-import VoiceRecorder from '../components/recorder/VoiceRecorder';
+import VoiceRecorder from '../components/VoiceRecorder';
 import { COLORS } from '../constants/Colors';
 import { Text } from 'react-native';
 
 const FeedScreen: React.FC = () => {
-  const { data } = useVoiceCards();
-  const dispatch = useDispatch();
+  const { voiceCards: data } = useVoiceCards();
   const swiperRef = useRef<Swiper<any>>(null);
-
-  useEffect(() => {
-    if (data) {
-      dispatch(setVoiceCards(data));
-    }
-  }, [data, dispatch]);
 
   const onSwipedLeft = (cardIndex: number) => {
     console.log(`Swiped left on card index: ${cardIndex}`);
@@ -78,15 +69,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     padding: 0,
     margin: 0,
+    height: 700,
   },
   swiperContainer: {
     flex: 1,
-    height: '100%',
     padding: 0,
     margin: 0,
   },
   card: {
-    height: '75%',
+    height: 320,
     marginTop: 0,
     marginBottom: 0,
   },
