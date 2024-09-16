@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { voiceCardApi } from './api/voice-card.api';
+import { voiceCardApi } from './api/VoiceCardApi';
 import voiceCardsReducer from './reducers/voice-cards';
 
 

@@ -5,7 +5,8 @@ import VoiceCard from '../components/VoiceCard';
 import VoiceRecorder from '../components/VoiceRecorder';
 import { COLORS } from '../constants/Colors';
 import { Text } from 'react-native';
-import { useGetVoiceCardsQuery } from '../store/api/voice-card.api';
+import { useGetVoiceCardsQuery } from '../store/api/VoiceCardApi';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const FeedScreen: React.FC = () => {
   const { data, error, isLoading } = useGetVoiceCardsQuery();
@@ -20,6 +21,10 @@ const FeedScreen: React.FC = () => {
     console.log(`Swiped right on card index: ${cardIndex}`);
     // Handle swipe right action (e.g., like)
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
 
   return (
     <View style={styles.container}>
