@@ -24,3 +24,7 @@ expo-env.d.ts
 # Environment variables
 .env  
 
+# .md files but not README.md
+*.md
+!README.md
+
