@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { Provider } from 'react-redux';
 import { COLORS } from '@/src/constants/Colors';
-import { store } from '@/src/store/store';
+import { store } from '@/src/store';
 
 
 export default function RootLayout() {
@@ -29,6 +29,7 @@ export default function RootLayout() {
           <Stack.Screen name="detail/[id]" options={{ title: 'VoiceCard Detail' }} />
           <Stack.Screen name="profile/index" options={{ title: 'Profile' }} />
         </Stack>
+        {/* <Slot /> */}
       </ThemeProvider>
     </Provider >
   );

@@ -91,7 +91,7 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
       <View style={styles.waveformProgress}>
         <Text style={styles.timeTextPosition}>{Math.floor(position / 1000 / 60)}:{Math.floor(position / 1000) % 60}</Text>
         <TouchableOpacity onPress={togglePlayback} style={styles.playButton}>
-          <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.red} />
+          <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.dark} />
         </TouchableOpacity>
         <Text style={styles.timeTextDuration}>{Math.floor(duration / 1000 / 60)}:{Math.floor(duration / 1000) % 60}</Text>
       </View>
@@ -128,8 +128,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.red,
   },
   timeTextDuration: {
     fontSize: 12,

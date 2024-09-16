@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Animated, Alert } from 'react-nativ
 import { Audio } from 'expo-av';
 import { COLORS } from '../constants/Colors';
 import { useDispatch } from 'react-redux';
-import { addVoiceCard } from '@/src/store/voice-cards';
+import { addVoiceCard } from '@/src/store/reducers/voice-cards';
 import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome
 
 const VoiceRecorder: React.FC = () => {

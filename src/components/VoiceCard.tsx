@@ -3,11 +3,14 @@ import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/Colors';
 import VoicePlayer from './VoicePlayer';
 
-interface VoiceCardProps {
+export interface VoiceCardProps {
   id: string;
-  author: string;
+  author: {
+    name: string;
+    id: string;
+  };
   location: string;
-  timestamp: string;
+  createdAt: string;
   audioUrl: string;
   title: string;
   description: string;
@@ -17,7 +20,7 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ author, audioUrl, title, descript
   return (
     <View style={styles.cardContainer}>
       <View style={styles.cardTextContainer}>
-        <Text style={styles.author}>{author}</Text>
+        <Text style={styles.author}>{author.name}</Text>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>

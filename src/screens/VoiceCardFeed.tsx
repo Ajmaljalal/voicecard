@@ -2,13 +2,13 @@ import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import VoiceCard from '../components/VoiceCard';
-import { useVoiceCards } from '../hooks/useVoiceCard';
 import VoiceRecorder from '../components/VoiceRecorder';
 import { COLORS } from '../constants/Colors';
 import { Text } from 'react-native';
+import { useGetVoiceCardsQuery } from '../store/api/voice-card.api';
 
 const FeedScreen: React.FC = () => {
-  const { voiceCards: data } = useVoiceCards();
+  const { data, error, isLoading } = useGetVoiceCardsQuery();
   const swiperRef = useRef<Swiper<any>>(null);
 
   const onSwipedLeft = (cardIndex: number) => {
@@ -32,7 +32,7 @@ const FeedScreen: React.FC = () => {
               id={card.id}
               author={card.author}
               location={card.location}
-              timestamp={card.timestamp}
+              createdAt={card.createdAt}
               audioUrl={card.audioUrl}
               title={card.title}
               description={card.description}
