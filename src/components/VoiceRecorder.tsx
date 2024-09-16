@@ -162,7 +162,7 @@ const VoiceRecorder: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.waveContainer}>
-        {renderBars()}
+        {/* {renderBars()} */}
       </View>
       <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
         <TouchableOpacity
@@ -170,9 +170,9 @@ const VoiceRecorder: React.FC = () => {
           style={[styles.button, isRecording ? styles.stopButton : styles.recordButton]}
         >
           {isRecording ? (
-            <FontAwesome name="stop" size={30} color="white" />
+            <FontAwesome name="stop" size={30} color="red" />
           ) : (
-            <FontAwesome name="microphone" size={30} color="white" />
+            <FontAwesome name="microphone" size={30} color="red" />
           )}
         </TouchableOpacity>
       </Animated.View>
@@ -197,10 +197,9 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     flexDirection: 'row',
     gap: 10,
-    borderWidth: 1,
-    borderColor: 'lightgray',
+    backgroundColor: COLORS.dark,
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 20,
     marginHorizontal: 20,
   },
   button: {
@@ -211,11 +210,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   recordButton: {
-    backgroundColor: COLORS.red,
   },
   stopButton: {
-    backgroundColor: COLORS.red,
-    opacity: 0.8,
+    // backgroundColor: COLORS.red,
   },
   pauseButton: {
     backgroundColor: COLORS.muted,

@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     borderWidth: 0.5,
-    borderColor: 'lightgray',
+    borderColor: COLORS.dark,
   },
   cardTextContainer: {
     flex: 1,
