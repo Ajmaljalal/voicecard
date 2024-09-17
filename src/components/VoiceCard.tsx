@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants/Colors';
 import VoicePlayer from './VoicePlayer';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import VoiceCardFooter from './VoiceCardFooter';
 
 export interface VoiceCardProps {
   id: string;
@@ -32,6 +34,7 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, desc
         <Text style={styles.description}>{description}</Text>
       </View>
       <VoicePlayer audioUrl={audioUrl} />
+      <VoiceCardFooter id={id} />
     </TouchableOpacity>
   );
 };
@@ -40,6 +43,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: COLORS.background,
     padding: 24,
+    paddingBottom: 15,
     borderRadius: 16,
     shadowColor: COLORS.dark,
     shadowOffset: { width: 0, height: 1 },
@@ -49,9 +53,11 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 0.5,
     borderColor: COLORS.dark,
+    flex: 1,
+    justifyContent: 'space-between',
   },
   cardTextContainer: {
-    flex: 1,
+    marginBottom: 24,
   },
   author: {
     fontSize: 14,
@@ -69,6 +75,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: COLORS.text,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

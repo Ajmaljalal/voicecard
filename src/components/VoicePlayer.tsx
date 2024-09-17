@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Audio, AVPlaybackStatus } from 'expo-av';
 import { COLORS } from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import SoundWaves from './common/SoundWaves';
 
 interface VoicePlayerProps {
   audioUrl: string;
@@ -62,36 +63,13 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
     }
   };
 
-  const renderWaveform = () => {
-    const progressPercentage = duration > 0 ? (position / duration) * 100 : 0;
-    const progressIndex = Math.floor((progressPercentage / 100) * 78);
-
-    return (
-      <View style={styles.waveformContainer}>
-        {[...Array(100)].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.waveformBar,
-              {
-                height: Math.random() * 20 + 5,
-                backgroundColor: index < progressIndex ? COLORS.red : 'lightgray'
-              }
-            ]}
-          />
-        ))}
-
-      </View>
-    );
-  };
-
   return (
     <View style={styles.playerContainer}>
-      {renderWaveform()}
+      <SoundWaves position={position} duration={duration} />
       <View style={styles.waveformProgress}>
         <Text style={styles.timeTextPosition}>{Math.floor(position / 1000 / 60)}:{Math.floor(position / 1000) % 60}</Text>
         <TouchableOpacity onPress={togglePlayback} style={styles.playButton}>
-          <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.dark} />
+          <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.red} />
         </TouchableOpacity>
         <Text style={styles.timeTextDuration}>{Math.floor(duration / 1000 / 60)}:{Math.floor(duration / 1000) % 60}</Text>
       </View>
@@ -106,18 +84,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  waveformContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 40,
-    marginBottom: 10,
-    width: '100%',
-  },
-  waveformBar: {
-    width: 2,
-    marginHorizontal: 1,
-    borderRadius: 1,
   },
   controlsContainer: {
     flexDirection: 'row',
