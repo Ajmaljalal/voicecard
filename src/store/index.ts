@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { voiceCardApi } from './api/VoiceCardApi';
-import voiceCardsReducer from './reducers/voice-cards';
+// import voiceCardsReducer from './reducers/voice-cards';
 
 
 export const store = configureStore({
   reducer: {
     [voiceCardApi.reducerPath]: voiceCardApi.reducer,
-    voiceCards: voiceCardsReducer,
+    // voiceCards: voiceCardsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(voiceCardApi.middleware),

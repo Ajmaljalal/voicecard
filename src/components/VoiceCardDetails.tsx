@@ -3,21 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants/Colors';
 import VoicePlayer from './VoicePlayer';
 import { useRouter } from 'expo-router';
+import { VoiceCardProps } from './VoiceCard';
 
-export interface VoiceCardProps {
-  id: string;
-  author: {
-    name: string;
-    id: string;
-  };
-  location: string;
-  createdAt: string;
-  audioUrl: string;
-  title: string;
-  description: string;
-}
 
-const VoiceCard: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, description }) => {
+const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, description }) => {
   const router = useRouter();
 
   const handlePress = () => {
@@ -38,20 +27,10 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, desc
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: COLORS.background,
     padding: 24,
-    borderRadius: 16,
-    shadowColor: COLORS.dark,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    elevation: 1,
-    height: '100%',
-    width: '100%',
-    borderWidth: 0.5,
-    borderColor: COLORS.dark,
   },
   cardTextContainer: {
-    flex: 1,
+    // flex: 1,
   },
   author: {
     fontSize: 14,
@@ -72,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VoiceCard;
+export default VoiceCardDetails;

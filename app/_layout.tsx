@@ -26,7 +26,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="index" options={{ title: 'Voice Cards' }} />
-          <Stack.Screen name="detail/[id]" options={{ title: 'VoiceCard Detail' }} />
+          <Stack.Screen name="voicecard-detail/[id]" options={{ headerTitle: '' }} />
           <Stack.Screen name="profile/index" options={{ title: 'Profile' }} />
         </Stack>
         {/* <Slot /> */}

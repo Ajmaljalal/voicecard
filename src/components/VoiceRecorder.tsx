@@ -182,7 +182,7 @@ const VoiceRecorder: React.FC = () => {
             onPress={isPaused ? resumeRecording : pauseRecording}
             style={[styles.button, isPaused ? styles.stopButton : styles.recordButton]}
           >
-            {isPaused ? <FontAwesome name="play" size={30} color="white" /> : <FontAwesome name="pause" size={30} color="white" />}
+            {isPaused ? <FontAwesome name="play" size={30} color={COLORS.dark} /> : <FontAwesome name="pause" size={30} color={COLORS.dark} />}
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -197,10 +197,12 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     flexDirection: 'row',
     gap: 10,
-    backgroundColor: COLORS.dark,
+    backgroundColor: COLORS.background,
     padding: 20,
     borderRadius: 20,
     marginHorizontal: 20,
+    borderWidth: 0.5,
+    borderColor: COLORS.dark,
   },
   button: {
     width: 70,

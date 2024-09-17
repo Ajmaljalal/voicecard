@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/Colors';
+import { VoiceCardProps } from '../components/VoiceCard';
+import VoiceCardDetails from '../components/VoiceCardDetails';
 
 
-const DetailScreen = ({ id }: { id: string }) => {
+const DetailScreen = ({ voiceCard }: { voiceCard: VoiceCardProps }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>VoiceCard Detail Screen</Text>
-      <Text style={styles.text}>VoiceCard ID: {id}</Text>
-      {/* Implement further details and replies here */}
+      <VoiceCardDetails {...voiceCard} />
     </View>
   );
 };
@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: COLORS.background,
-    padding: 16,
+    height: '100%',
+
   },
   text: {
     fontSize: 18,

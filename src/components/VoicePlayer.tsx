@@ -68,7 +68,7 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
 
     return (
       <View style={styles.waveformContainer}>
-        {[...Array(76)].map((_, index) => (
+        {[...Array(100)].map((_, index) => (
           <View
             key={index}
             style={[
@@ -102,6 +102,8 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
 const styles = StyleSheet.create({
   playerContainer: {
     width: '100%',
+    maxWidth: '100%',
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
