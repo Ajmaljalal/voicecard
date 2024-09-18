@@ -13,6 +13,7 @@ const VoiceCardRepliesList: React.FC<VoiceCardRepliesListProps> = ({ replies }) 
       keyExtractor={(reply) => reply.id.toString()}
       renderItem={({ item }) => <VoiceCardReply {...item} />}
       showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.container}
     />
   );
 };
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
   container: {
     paddingBottom: 24,
     maxHeight: 300,
+    gap: 4,
   },
 });
 
