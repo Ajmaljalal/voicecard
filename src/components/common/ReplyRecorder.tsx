@@ -1,19 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Animated, Alert } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Alert,
+  Modal,
+} from 'react-native';
 import { Audio } from 'expo-av';
-import { COLORS } from '../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
-import { useAddVoiceCardMutation } from '../store/api/VoiceCardApi';
-import { uploadVoiceToFirebase } from '../services/firebase/StorageService';
-import { VoiceCardInput } from '../models/VoiceCard.Model';
-import LoadingSpinner from './common/LoadingSpinner';
+import { COLORS } from '../../constants/Colors';
+import LoadingSpinner from './LoadingSpinner';
+import { uploadVoiceToFirebase } from '../../services/firebase/StorageService';
+import { useAddVoiceCardMutation } from '../../store/api/VoiceCardApi';
+import { VoiceCardInput } from '../../models/VoiceCard.Model';
 
-const VoiceRecorder: React.FC = () => {
+interface ReplyRecorderProps {
+  visible: boolean;
+  onClose: () => void;
+  parentVoiceCardId: string; // ID of the voice card being replied to
+}
+
+const ReplyRecorder: React.FC<ReplyRecorderProps> = ({
+  visible,
+  onClose,
+  parentVoiceCardId,
+}) => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [addVoiceCard] = useAddVoiceCardMutation();
   const [isLoading, setIsLoading] = useState(false);
+  const [addVoiceCard] = useAddVoiceCardMutation();
+
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const barAnimations = useRef(Array(20).fill(0).map(() => new Animated.Value(0))).current;
+
   const startRecording = async () => {
     try {
       setIsRecording(true);
@@ -36,7 +57,6 @@ const VoiceRecorder: React.FC = () => {
         );
         setRecording(newRecording);
       }
-
     } catch (err) {
       console.error('Failed to start recording', err);
       setIsRecording(false);
@@ -70,24 +90,28 @@ const VoiceRecorder: React.FC = () => {
           throw new Error('Recording URI is null');
         }
 
-        const { audioUrl } = await uploadVoiceToFirebase(uri, 'userId');
+        const status = await recording.getStatusAsync();
+        const duration = status.durationMillis;
+
+        const { audioUrl } = await uploadVoiceToFirebase(uri, 'userId'); // TODO: Replace 'userId' with actual user ID
 
         // Create a new VoiceCard with the audio URL
         const newVoiceCard: VoiceCardInput = {
+          parentId: parentVoiceCardId,
           author: {
-            id: 'userId',
-            name: 'You',
+            id: 'userId', // TODO: Replace with actual user ID
+            name: 'You', // TODO: Replace with actual user name
           },
           location: {
-            city: 'Sacramento',
-            state: 'CA',
-            country: 'USA',
+            city: 'Sacramento', // TODO: Replace with actual location
+            state: 'CA', // TODO: Replace with actual location
+            country: 'USA', // TODO: Replace with actual location
             zipcode: '95814',
           },
-          audioDuration: recording._finalDurationMillis,
+          audioDuration: duration,
           audioUrl: audioUrl, // Use the URL from Firebase Storage
-          title: 'New Voice Card',
-          description: 'New Voice Card Description',
+          title: 'Reply Voice Card',
+          description: 'Reply to your voice card.',
         };
 
         await addVoiceCard(newVoiceCard);
@@ -95,7 +119,8 @@ const VoiceRecorder: React.FC = () => {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
         });
-        Alert.alert('Recording Saved', 'Your voice message has been recorded.');
+        Alert.alert('Recording Saved', 'Your reply has been recorded.');
+        onClose(); // Close the modal after successful upload
       }
     } catch (err) {
       console.error('Failed to stop recording', err);
@@ -104,9 +129,6 @@ const VoiceRecorder: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const barAnimations = useRef(Array(20).fill(0).map(() => new Animated.Value(0))).current;
 
   useEffect(() => {
     let animationLoop: Animated.CompositeAnimation | null = null;
@@ -180,51 +202,82 @@ const VoiceRecorder: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-          <TouchableOpacity
-            onPress={isRecording ? stopRecording : startRecording}
-            style={[styles.button, isRecording ? styles.stopButton : styles.recordButton]}
-          >
-            {isRecording ? (
-              <FontAwesome name="stop" size={30} color="red" />
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalBackground}>
+        <View style={styles.modalContainer}>
+          <View style={styles.buttonsContainer}>
+            {isLoading ? (
+              <LoadingSpinner />
             ) : (
-              <FontAwesome name="microphone" size={30} color="red" />
+              <Animated.View style={{ transform: [{ scale: pulseAnim }], }}>
+                <TouchableOpacity
+                  onPress={isRecording ? stopRecording : startRecording}
+                  style={[styles.button, isRecording ? styles.stopButton : styles.recordButton]}
+                >
+                  {isRecording ? (
+                    <FontAwesome name="stop" size={30} color={COLORS.red} />
+                  ) : (
+                    <FontAwesome name="microphone" size={30} color={COLORS.red} />
+                  )}
+                </TouchableOpacity>
+              </Animated.View>
             )}
+            {isRecording && !isLoading && (
+              <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                <TouchableOpacity
+                  onPress={isPaused ? resumeRecording : pauseRecording}
+                  style={[styles.button, isPaused ? styles.pauseButton : styles.recordButton]}
+                >
+                  {isPaused ? (
+                    <FontAwesome name="play" size={30} color={COLORS.dark} />
+                  ) : (
+                    <FontAwesome name="pause" size={30} color={COLORS.dark} />
+                  )}
+                </TouchableOpacity>
+              </Animated.View>
+            )}
+          </View>
+          {isRecording && !isLoading && (
+            <View style={styles.waveContainer}>
+              {renderBars()}
+            </View>
+          )}
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <FontAwesome name="close" size={24} color={COLORS.muted} />
           </TouchableOpacity>
-        </Animated.View>
-      )}
-      {isRecording && !isLoading && (
-        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-          <TouchableOpacity
-            onPress={isPaused ? resumeRecording : pauseRecording}
-            style={[styles.button, isPaused ? styles.stopButton : styles.recordButton]}
-          >
-            {isPaused ? <FontAwesome name="play" size={30} color={COLORS.dark} /> : <FontAwesome name="pause" size={30} color={COLORS.dark} />}
-          </TouchableOpacity>
-        </Animated.View>
-      )}
-    </View>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
-    marginBottom: 60,
-    flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '80%',
+    height: 300,
     backgroundColor: COLORS.background,
     padding: 20,
     borderRadius: 20,
-    marginHorizontal: 20,
-    borderWidth: 0.5,
-    borderColor: COLORS.dark,
-    height: 100,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   button: {
     width: 70,
@@ -232,32 +285,41 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
   },
   recordButton: {
+
   },
   stopButton: {
-    // backgroundColor: COLORS.red,
+
   },
   pauseButton: {
-    backgroundColor: COLORS.muted,
-  },
-  resumeButton: {
-    backgroundColor: COLORS.muted,
+
   },
   waveContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    position: 'absolute',
-    width: 200,
-    height: 100,
+    alignItems: 'flex-end',
+    width: '100%',
+    height: 50,
+    marginTop: 10,
   },
   bar: {
-    width: 1,
-    height: 100,
+    width: 2,
+    height: 30,
     backgroundColor: COLORS.dark,
     opacity: 1,
+    marginHorizontal: 1,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 });
 
-export default VoiceRecorder;
+export default ReplyRecorder;

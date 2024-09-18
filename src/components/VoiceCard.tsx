@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants/Colors';
 import VoicePlayer from './VoicePlayer';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import VoiceCardFooter from './VoiceCardFooter';
+import ReplyRecorder from './common/ReplyRecorder';
 
 export interface VoiceCardProps {
   id: string;
@@ -19,11 +19,20 @@ export interface VoiceCardProps {
   description: string;
 }
 
-const VoiceCard: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, description }) => {
+const VoiceCard = ({ id, author, audioUrl, title, description }: VoiceCardProps) => {
   const router = useRouter();
+  const [isRecorderVisible, setIsRecorderVisible] = useState(false);
 
   const handlePress = () => {
     router.push(`/voicecard-detail/${id}`);
+  };
+
+  const openRecorder = () => {
+    setIsRecorderVisible(true);
+  };
+
+  const closeRecorder = () => {
+    setIsRecorderVisible(false);
   };
 
   return (
@@ -38,7 +47,12 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, desc
         <Text style={styles.description}>{description}</Text>
       </View>
       <VoicePlayer audioUrl={audioUrl} />
-      <VoiceCardFooter id={id} />
+      <VoiceCardFooter onReply={openRecorder} />
+      <ReplyRecorder
+        visible={isRecorderVisible}
+        onClose={closeRecorder}
+        parentVoiceCardId={id}
+      />
     </TouchableOpacity>
   );
 };
@@ -59,6 +73,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.dark,
     flex: 1,
     justifyContent: 'space-between',
+    position: 'relative',
   },
   cardTextContainer: {
     marginBottom: 24,
@@ -84,6 +99,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  replyButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.muted,
+    padding: 10,
+    borderRadius: 20,
+  },
+  replyText: {
+    marginLeft: 5,
+    color: COLORS.dark,
+    fontSize: 14,
   },
 });
 

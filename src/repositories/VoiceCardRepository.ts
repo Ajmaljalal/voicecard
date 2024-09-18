@@ -1,4 +1,4 @@
-import { VoiceCard, VoiceCardInput } from '../models/VoiceCard';
+import { VoiceCard, VoiceCardInput } from '../models/VoiceCard.Model';
 
 export interface VoiceCardRepository {
   fetchVoiceCards(): Promise<VoiceCard[]>;

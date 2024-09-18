@@ -1,4 +1,4 @@
-import { VoiceCard, VoiceCardInput } from '@/src/models/VoiceCard';
+import { VoiceCard, VoiceCardInput } from '@/src/models/VoiceCard.Model';
 import { VoiceCardRepository } from '@/src/repositories/VoiceCardRepository';
 import { FirebaseVoiceCardRepository } from '@/src/repositories/FirebaseVoiceCardRepository';
 import api from './index';
