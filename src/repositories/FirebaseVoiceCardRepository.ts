@@ -2,10 +2,11 @@ import {
   collection,
   getDocs,
   addDoc,
-  Timestamp,
   query,
   orderBy,
   DocumentData,
+  doc,
+  setDoc,
 } from 'firebase/firestore';
 import { db } from '@/src/services/firebase/Firestore';
 import { VoiceCard, VoiceCardInput } from '@/src/models/VoiceCard';
@@ -33,9 +34,11 @@ export class FirebaseVoiceCardRepository implements VoiceCardRepository {
   }
 
   async addVoiceCard(card: VoiceCardInput): Promise<void> {
-    await addDoc(this.collectionRef, {
+    const docRef = doc(this.collectionRef);
+    await setDoc(docRef, {
       ...card,
-      timestamp: Timestamp.now(),
+      id: docRef.id,
+      createdAt: new Date().toISOString(),
     });
   }
 

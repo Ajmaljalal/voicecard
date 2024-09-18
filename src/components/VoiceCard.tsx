@@ -27,7 +27,11 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, desc
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} style={styles.cardContainer}>
+    <TouchableOpacity
+      onPress={handlePress}
+      style={styles.cardContainer}
+      activeOpacity={1}
+    >
       <View style={styles.cardTextContainer}>
         <Text style={styles.author}>{author.name}</Text>
         <Text style={styles.title}>{title}</Text>

@@ -1,5 +1,4 @@
 import { getApps, initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
 
 
 const firebaseConfig = {
@@ -14,4 +13,3 @@ const firebaseConfig = {
 
 
 export const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-export const storage = getStorage(app);

@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/Colors';
 import VoicePlayer from './VoicePlayer';
-import { useRouter } from 'expo-router';
 import { VoiceCardProps } from './VoiceCard';
 import VoiceCardFooter from './VoiceCardFooter';
 import VoiceCardRepliesList from './VoiceCardRepliesList';
@@ -62,8 +61,8 @@ const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, titl
       <View style={styles.cardContainer}>
         <View style={styles.cardTextContainer}>
           <Text style={styles.author}>{author.name}</Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.title} numberOfLines={1}>{title} </Text>
+          <Text style={styles.description} numberOfLines={2}>{description} and more here for testing purposes</Text>
         </View>
         <VoicePlayer audioUrl={audioUrl} />
         <VoiceCardFooter id={id} />
@@ -85,10 +84,10 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: COLORS.muted,
     marginBottom: 12,
-    height: 280,
+    height: 270,
   },
   cardTextContainer: {
-    marginBottom: 12,
+    marginBottom: 0
   },
   author: {
     fontSize: 14,
@@ -106,6 +105,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: COLORS.text,
+    height: 40,
+    maxHeight: 40,
   },
 });
 

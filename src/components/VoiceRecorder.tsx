@@ -2,16 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated, Alert } from 'react-native';
 import { Audio } from 'expo-av';
 import { COLORS } from '../constants/Colors';
-import { useDispatch } from 'react-redux';
-import { addVoiceCard } from '@/src/store/reducers/voice-cards';
-import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome
+import { FontAwesome } from '@expo/vector-icons';
+import { useAddVoiceCardMutation } from '../store/api/VoiceCardApi';
+import { uploadVoiceToFirebase } from '../services/firebase/StorageService';
+import { VoiceCardInput } from '../models/VoiceCard';
+import LoadingSpinner from './common/LoadingSpinner';
 
 const VoiceRecorder: React.FC = () => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const dispatch = useDispatch();
-
+  const [addVoiceCard] = useAddVoiceCardMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const startRecording = async () => {
     try {
       setIsRecording(true);
@@ -59,22 +61,37 @@ const VoiceRecorder: React.FC = () => {
   const stopRecording = async () => {
     try {
       if (recording) {
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        setRecording(null);
         setIsRecording(false);
         setIsPaused(false);
-        // For demonstration, create a dummy VoiceCard
-        const newVoiceCard = {
-          id: Date.now().toString(),
-          author: 'You',
-          location: 'Sacramento, CA',
-          timestamp: 'Just now',
-          audioUrl: uri || '',
+        setIsLoading(true);
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        if (!uri) {
+          throw new Error('Recording URI is null');
+        }
+
+        const { audioUrl } = await uploadVoiceToFirebase(uri, 'userId');
+
+        // Create a new VoiceCard with the audio URL
+        const newVoiceCard: VoiceCardInput = {
+          author: {
+            id: 'userId',
+            name: 'You',
+          },
+          location: {
+            city: 'Sacramento',
+            state: 'CA',
+            country: 'USA',
+            zipcode: '95814',
+          },
+          audioDuration: recording._finalDurationMillis,
+          audioUrl: audioUrl, // Use the URL from Firebase Storage
           title: 'New Voice Card',
           description: 'New Voice Card Description',
         };
-        dispatch(addVoiceCard(newVoiceCard));
+
+        await addVoiceCard(newVoiceCard);
+        setIsLoading(false);
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
         });
@@ -82,6 +99,9 @@ const VoiceRecorder: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to stop recording', err);
+      setIsRecording(false);
+      setIsPaused(false);
+      setIsLoading(false);
     }
   };
 
@@ -161,22 +181,23 @@ const VoiceRecorder: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.waveContainer}>
-        {/* {renderBars()} */}
-      </View>
-      <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-        <TouchableOpacity
-          onPress={isRecording ? stopRecording : startRecording}
-          style={[styles.button, isRecording ? styles.stopButton : styles.recordButton]}
-        >
-          {isRecording ? (
-            <FontAwesome name="stop" size={30} color="red" />
-          ) : (
-            <FontAwesome name="microphone" size={30} color="red" />
-          )}
-        </TouchableOpacity>
-      </Animated.View>
-      {isRecording && (
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+          <TouchableOpacity
+            onPress={isRecording ? stopRecording : startRecording}
+            style={[styles.button, isRecording ? styles.stopButton : styles.recordButton]}
+          >
+            {isRecording ? (
+              <FontAwesome name="stop" size={30} color="red" />
+            ) : (
+              <FontAwesome name="microphone" size={30} color="red" />
+            )}
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+      {isRecording && !isLoading && (
         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
           <TouchableOpacity
             onPress={isPaused ? resumeRecording : pauseRecording}
@@ -203,6 +224,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderWidth: 0.5,
     borderColor: COLORS.dark,
+    height: 100,
   },
   button: {
     width: 70,

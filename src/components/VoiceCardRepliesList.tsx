@@ -21,7 +21,6 @@ const VoiceCardRepliesList: React.FC<VoiceCardRepliesListProps> = ({ replies }) 
 const styles = StyleSheet.create({
   container: {
     paddingBottom: 24,
-    maxHeight: 300,
     gap: 4,
   },
 });

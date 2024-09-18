@@ -6,7 +6,7 @@ import VoiceRecorder from '../components/VoiceRecorder';
 import { COLORS } from '../constants/Colors';
 import { Text } from 'react-native';
 import { useGetVoiceCardsQuery } from '../store/api/VoiceCardApi';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const FeedScreen: React.FC = () => {
   const { data, error, isLoading } = useGetVoiceCardsQuery();

@@ -26,11 +26,11 @@ export const voiceCardApi = api.injectEndpoints({
           ]
           : [{ type: RtkQueryTagTypes.VoiceCards, id: 'VoiceCardsList' }],
     }),
-    addVoiceCard: builder.mutation<void, VoiceCardInput>({
+    addVoiceCard: builder.mutation<string, VoiceCardInput>({
       queryFn: async (voiceCard) => {
         try {
           await voiceCardRepository.addVoiceCard(voiceCard);
-          return { data: undefined };
+          return { data: 'success' };
         } catch (error) {
           return { error: { status: 'error', data: error } };
         }
