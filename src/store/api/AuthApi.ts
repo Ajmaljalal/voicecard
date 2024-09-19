@@ -48,11 +48,11 @@ export const authApi = api.injectEndpoints({
       },
       invalidatesTags: [{ type: RtkQueryTagTypes.Auth, id: 'AppUser' }],
     }),
-    signOut: builder.mutation<void, void>({
+    signOut: builder.mutation<{ success: boolean }, void>({
       queryFn: async () => {
         try {
           await authService.signOut();
-          return { data: undefined };
+          return { data: { success: true } };
         } catch (error) {
           return { error: { status: 'error', data: error } };
         }
