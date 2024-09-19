@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av'; // Ensure you have this package installed
-import SoundWaves from './common/SoundWaves';
+import SoundWaves from '@/src/components/common/SoundWaves';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS } from '../constants/Colors';
+import { COLORS } from '@/src/constants/Colors';
 
 export interface VoiceCardReplyProps {
   id: string;

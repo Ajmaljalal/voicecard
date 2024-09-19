@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Audio, AVPlaybackStatus } from 'expo-av';
-import { COLORS } from '../constants/Colors';
+import { COLORS } from '@/src/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import SoundWaves from './common/SoundWaves';
+import SoundWaves from '@/src/components/common/SoundWaves';
 
 interface VoicePlayerProps {
   audioUrl: string;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../constants/Colors';
-import VoicePlayer from './VoicePlayer';
+import { COLORS } from '../../constants/Colors';
+import VoicePlayer from '@/src/components/voice-player/VoicePlayer';
 import { VoiceCardProps } from './VoiceCard';
-import VoiceCardFooter from './VoiceCardFooter';
-import VoiceCardRepliesList from './VoiceCardRepliesList';
+import VoiceCardFooter from '@/src/components/voicecard/VoiceCardFooter';
+import VoiceCardRepliesList from '../voicecard-reply/VoiceCardRepliesList';
 
 const dummyReplies = [
   {
@@ -65,7 +65,7 @@ const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, titl
           <Text style={styles.description} numberOfLines={2}>{description} and more here for testing purposes</Text>
         </View>
         <VoicePlayer audioUrl={audioUrl} />
-        <VoiceCardFooter id={id} />
+        <VoiceCardFooter parentVoiceCardId={id} />
       </View>
       <VoiceCardRepliesList replies={dummyReplies} />
     </View>

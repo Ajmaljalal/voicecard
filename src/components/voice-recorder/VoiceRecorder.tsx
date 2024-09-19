@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated, Alert } from 'react-native';
 import { Audio } from 'expo-av';
-import { COLORS } from '../constants/Colors';
+import { COLORS } from '../../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
-import { useAddVoiceCardMutation } from '../store/api/VoiceCardApi';
-import { uploadVoiceToFirebase } from '../services/firebase/StorageService';
-import { VoiceCardInput } from '../models/VoiceCard.Model';
-import LoadingSpinner from './common/LoadingSpinner';
+import { useAddVoiceCardMutation } from '../../store/api/VoiceCardApi';
+import { uploadVoiceToFirebase } from '../../services/firebase/StorageService';
+import { VoiceCardInput } from '../../models/VoiceCard.Model';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const VoiceRecorder: React.FC = () => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);

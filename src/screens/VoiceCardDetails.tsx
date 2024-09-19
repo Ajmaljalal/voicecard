@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/Colors';
-import { VoiceCardProps } from '../components/VoiceCard';
-import VoiceCardDetails from '../components/VoiceCardDetails';
+import { VoiceCardProps } from '../components/voicecard/VoiceCard';
+import VoiceCardDetails from '../components/voicecard/VoiceCardDetails';
 
 
 const DetailScreen = ({ voiceCard }: { voiceCard: VoiceCardProps }) => {

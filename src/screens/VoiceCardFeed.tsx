@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
-import VoiceCard from '../components/VoiceCard';
-import VoiceRecorder from '../components/VoiceRecorder';
-import { COLORS } from '../constants/Colors';
+import VoiceCard from '@/src/components/voicecard/VoiceCard';
+import VoiceRecorder from '@/src/components/voice-recorder/VoiceRecorder';
+import { COLORS } from '@/src/constants/Colors';
 import { Text } from 'react-native';
-import { useGetVoiceCardsQuery } from '../store/api/VoiceCardApi';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import { useGetVoiceCardsQuery } from '@/src/store/api/VoiceCardApi';
+import LoadingSpinner from '@/src/components/common/LoadingSpinner';
 
 const FeedScreen: React.FC = () => {
   const { data, error, isLoading } = useGetVoiceCardsQuery();

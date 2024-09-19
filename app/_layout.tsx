@@ -6,6 +6,7 @@ import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { Provider } from 'react-redux';
 import { COLORS } from '@/src/constants/Colors';
 import { store } from '@/src/store';
+import ModalMapper from '@/src/components/modals';
 
 
 export default function RootLayout() {
@@ -29,7 +30,7 @@ export default function RootLayout() {
           <Stack.Screen name="voicecard-detail/[id]" options={{ headerTitle: '' }} />
           <Stack.Screen name="profile/index" options={{ title: 'Profile' }} />
         </Stack>
-        {/* <Slot /> */}
+        <ModalMapper />
       </ThemeProvider>
     </Provider >
   );

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { COLORS } from '../constants/Colors';
-import VoicePlayer from './VoicePlayer';
+import { COLORS } from '@/src/constants/Colors';
+import VoicePlayer from '@/src/components/voice-player/VoicePlayer';
 import { useRouter } from 'expo-router';
 import VoiceCardFooter from './VoiceCardFooter';
-import ReplyRecorder from './common/ReplyRecorder';
 
 export interface VoiceCardProps {
   id: string;
@@ -21,18 +20,9 @@ export interface VoiceCardProps {
 
 const VoiceCard = ({ id, author, audioUrl, title, description }: VoiceCardProps) => {
   const router = useRouter();
-  const [isRecorderVisible, setIsRecorderVisible] = useState(false);
 
   const handlePress = () => {
     router.push(`/voicecard-detail/${id}`);
-  };
-
-  const openRecorder = () => {
-    setIsRecorderVisible(true);
-  };
-
-  const closeRecorder = () => {
-    setIsRecorderVisible(false);
   };
 
   return (
@@ -47,12 +37,7 @@ const VoiceCard = ({ id, author, audioUrl, title, description }: VoiceCardProps)
         <Text style={styles.description}>{description}</Text>
       </View>
       <VoicePlayer audioUrl={audioUrl} />
-      <VoiceCardFooter onReply={openRecorder} />
-      <ReplyRecorder
-        visible={isRecorderVisible}
-        onClose={closeRecorder}
-        parentVoiceCardId={id}
-      />
+      <VoiceCardFooter parentVoiceCardId={id} />
     </TouchableOpacity>
   );
 };

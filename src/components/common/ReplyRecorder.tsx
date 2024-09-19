@@ -15,16 +15,18 @@ import { uploadVoiceToFirebase } from '../../services/firebase/StorageService';
 import { useAddVoiceCardMutation } from '../../store/api/VoiceCardApi';
 import { VoiceCardInput } from '../../models/VoiceCard.Model';
 
-interface ReplyRecorderProps {
+interface VoiceRecorderProps {
   visible: boolean;
   onClose: () => void;
-  parentVoiceCardId: string; // ID of the voice card being replied to
+  props: {
+    parentVoiceCardId: string;
+  };
 }
 
-const ReplyRecorder: React.FC<ReplyRecorderProps> = ({
+const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   visible,
   onClose,
-  parentVoiceCardId,
+  props: { parentVoiceCardId }
 }) => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -322,4 +324,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReplyRecorder;
+export default VoiceRecorder;
