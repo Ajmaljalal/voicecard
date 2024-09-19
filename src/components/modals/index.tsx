@@ -1,12 +1,13 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/reducers';
+import { useDispatch } from 'react-redux';
 import AuthModal from './auth';
 import { Text } from 'react-native';
 
 import { closeModal } from '../../store/reducers/modal';
 import { ModalName } from '@/src/types/modal';
-import VoiceRecorder from '../voice-recorder/VoiceRecorder';
+import { modalSelector } from '@/src/store/selectors/ModalSelector';
+import { useAppSelector } from '@/src/store';
+import VoiceRecorder from '../common/VoiceRecorder';
 
 const ModalComponents: Record<ModalName, React.FC<any>> = {
   'Auth': AuthModal,
@@ -16,7 +17,7 @@ const ModalComponents: Record<ModalName, React.FC<any>> = {
 
 const ModalMapper: React.FC = () => {
   const dispatch = useDispatch();
-  const { currentModal, modalProps } = useSelector((state: RootState) => state.modal);
+  const { currentModal, modalProps } = useAppSelector(modalSelector);
 
   if (!currentModal) return null;
 

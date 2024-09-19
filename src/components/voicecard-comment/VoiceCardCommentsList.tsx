@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, FlatList } from 'react-native';
-import VoiceCardReply from '@/src/components/voicecard-reply/VoiceCardReply';
+import VoiceCardComment from './VoiceCardComment';
+
 
 interface VoiceCardRepliesListProps {
   replies: any[];
@@ -11,7 +12,7 @@ const VoiceCardRepliesList: React.FC<VoiceCardRepliesListProps> = ({ replies }) 
     <FlatList
       data={replies}
       keyExtractor={(reply) => reply.id.toString()}
-      renderItem={({ item }) => <VoiceCardReply {...item} />}
+      renderItem={({ item }) => <VoiceCardComment {...item} />}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.container}
     />

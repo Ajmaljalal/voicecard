@@ -2,11 +2,11 @@ import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import VoiceCard from '@/src/components/voicecard/VoiceCard';
-import VoiceRecorder from '@/src/components/voice-recorder/VoiceRecorder';
 import { COLORS } from '@/src/constants/Colors';
 import { Text } from 'react-native';
 import { useGetVoiceCardsQuery } from '@/src/store/api/VoiceCardApi';
 import LoadingSpinner from '@/src/components/common/LoadingSpinner';
+import VoiceRecordButton from '../components/common/VoiceRecordButton';
 
 const FeedScreen: React.FC = () => {
   const { data, error, isLoading } = useGetVoiceCardsQuery();
@@ -62,7 +62,7 @@ const FeedScreen: React.FC = () => {
           <Text>You have no voice cards</Text>
         </View>
       )}
-      <VoiceRecorder />
+      <VoiceRecordButton />
     </View>
   );
 };

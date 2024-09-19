@@ -31,5 +31,5 @@ export interface VoiceCardInput {
   description?: string;
   createdAt?: string;
   audioDuration?: number;
-  parentId?: string;
+  parentId?: string | null;
 }

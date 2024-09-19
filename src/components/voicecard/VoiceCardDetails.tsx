@@ -4,7 +4,7 @@ import { COLORS } from '../../constants/Colors';
 import VoicePlayer from '@/src/components/voice-player/VoicePlayer';
 import { VoiceCardProps } from './VoiceCard';
 import VoiceCardFooter from '@/src/components/voicecard/VoiceCardFooter';
-import VoiceCardRepliesList from '../voicecard-reply/VoiceCardRepliesList';
+import VoiceCardRepliesList from '../voicecard-comment/VoiceCardCommentsList';
 
 const dummyReplies = [
   {

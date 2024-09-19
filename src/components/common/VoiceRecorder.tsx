@@ -18,22 +18,19 @@ import { VoiceCardInput } from '../../models/VoiceCard.Model';
 interface VoiceRecorderProps {
   visible: boolean;
   onClose: () => void;
-  props: {
-    parentVoiceCardId: string;
-  };
+  parentVoiceCardId: string | null;
 }
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   visible,
   onClose,
-  props: { parentVoiceCardId }
+  parentVoiceCardId,
 }) => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [addVoiceCard] = useAddVoiceCardMutation();
-
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const barAnimations = useRef(Array(20).fill(0).map(() => new Animated.Value(0))).current;
 
@@ -99,7 +96,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
 
         // Create a new VoiceCard with the audio URL
         const newVoiceCard: VoiceCardInput = {
-          parentId: parentVoiceCardId,
+          parentId: parentVoiceCardId || null,
           author: {
             id: 'userId', // TODO: Replace with actual user ID
             name: 'You', // TODO: Replace with actual user name
