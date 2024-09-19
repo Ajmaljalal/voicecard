@@ -7,7 +7,7 @@ import { closeModal } from '@/src/store/reducers/modal';
 import { ModalName as ModalNameType } from '@/src/types/modal';
 import { modalSelector } from '@/src/store/selectors/ModalSelector';
 import { useAppSelector } from '@/src/store';
-import VoiceRecorder from '@/src/components/common/VoiceRecorder';
+import VoiceRecorder from '@/src/components/modals/recorder/VoiceRecorder';
 
 const ModalComponents: Record<ModalNameType, React.FC<any>> = {
   'Auth': AuthModal,

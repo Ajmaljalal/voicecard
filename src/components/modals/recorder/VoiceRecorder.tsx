@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/Colors';
-import LoadingSpinner from './LoadingSpinner';
-import { uploadVoiceToFirebase } from '../../services/firebase/StorageService';
-import { useAddVoiceCardMutation } from '../../store/api/VoiceCardApi';
-import { VoiceCardInput } from '../../models/VoiceCard.Model';
+import { COLORS } from '../../../constants/Colors';
+import LoadingSpinner from '../../common/LoadingSpinner';
+import { uploadVoiceToFirebase } from '../../../services/firebase/StorageService';
+import { useAddVoiceCardMutation } from '../../../store/api/VoiceCardApi';
+import { VoiceCardInput } from '../../../models/VoiceCard.Model';
+import { useGetCurrentUserQuery } from '@/src/store/api/AuthApi';
 
 interface VoiceRecorderProps {
   visible: boolean;
@@ -26,6 +27,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   onClose,
   parentVoiceCardId,
 }) => {
+  const { data: user } = useGetCurrentUserQuery();
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -78,6 +80,10 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   };
 
   const stopRecording = async () => {
+    if (!user || !user.authId) {
+      Alert.alert('Oops', 'You need to login first.');
+      return;
+    }
     try {
       if (recording) {
         setIsRecording(false);
@@ -92,14 +98,15 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
         const status = await recording.getStatusAsync();
         const duration = status.durationMillis;
 
-        const { audioUrl } = await uploadVoiceToFirebase(uri, 'userId'); // TODO: Replace 'userId' with actual user ID
+        const audioId = `${user.authId}-${Date.now().toString()}`;
+        const { audioUrl } = await uploadVoiceToFirebase(uri, audioId);
 
         // Create a new VoiceCard with the audio URL
         const newVoiceCard: VoiceCardInput = {
           parentId: parentVoiceCardId || null,
           author: {
-            id: 'userId', // TODO: Replace with actual user ID
-            name: 'You', // TODO: Replace with actual user name
+            id: user.authId,
+            name: user.username,
           },
           location: {
             city: 'Sacramento', // TODO: Replace with actual location
