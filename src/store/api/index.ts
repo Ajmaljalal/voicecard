@@ -9,6 +9,7 @@ const api = createApi({
   refetchOnReconnect: true,
   tagTypes: [
     RtkQueryTagTypes.VoiceCards,
+    RtkQueryTagTypes.Auth,
   ],
 });
 

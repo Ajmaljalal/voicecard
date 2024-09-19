@@ -1,10 +1,10 @@
 import { VoiceCard, VoiceCardInput } from '@/src/models/VoiceCard.Model';
 import { VoiceCardRepository } from '@/src/repositories/VoiceCardRepository';
-import { FirebaseVoiceCardRepository } from '@/src/repositories/FirebaseVoiceCardRepository';
 import api from './index';
 import { RtkQueryTagTypes } from '@/src/constants/RtkQueryTagTeyps';
+import { VoiceCardService } from '@/src/services/firebase/VoiceCardService';
 
-const voiceCardRepository: VoiceCardRepository = new FirebaseVoiceCardRepository();
+const voiceCardService: VoiceCardRepository = new VoiceCardService();
 
 export const voiceCardApi = api.injectEndpoints({
   overrideExisting: true,
@@ -12,7 +12,7 @@ export const voiceCardApi = api.injectEndpoints({
     getVoiceCards: builder.query<VoiceCard[], void>({
       queryFn: async () => {
         try {
-          const voiceCards = await voiceCardRepository.fetchVoiceCards();
+          const voiceCards = await voiceCardService.fetchVoiceCards();
           return { data: voiceCards };
         } catch (error) {
           return { error: { status: 'errorr', data: error } };
@@ -29,7 +29,7 @@ export const voiceCardApi = api.injectEndpoints({
     addVoiceCard: builder.mutation<string, VoiceCardInput>({
       queryFn: async (voiceCard) => {
         try {
-          await voiceCardRepository.addVoiceCard(voiceCard);
+          await voiceCardService.addVoiceCard(voiceCard);
           return { data: 'success' };
         } catch (error) {
           return { error: { status: 'error', data: error } };

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { COLORS } from '../../../constants/Colors';
-import { useSignupMutation } from '../../../store/api/AuthApi'; // Assume you have an AuthApi setup
+import { COLORS } from '@/src/constants/Colors';
+import { useSignupMutation } from '@/src/store/api/AuthApi'; // Assume you have an AuthApi setup
+import { useAppDispatch } from '@/src/store';
+import { closeModal } from '@/src/store/reducers/modal';
 
 const Signup: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,11 +23,11 @@ const Signup: React.FC = () => {
       return;
     }
     try {
-      await signup({ username, email, password }).unwrap();
-      Alert.alert('Success', 'Account created successfully!');
+      await signup({ user: { email, password, username } }).unwrap();
+      dispatch(closeModal());
       // Handle post-signup actions here
-    } catch (error) {
-      Alert.alert('Signup Failed', error?.data?.message || 'An error occurred.');
+    } catch (error: any) {
+      Alert.alert('Signup Failed', 'An error occurred, please try again.');
     }
   };
 
@@ -74,7 +77,7 @@ const Signup: React.FC = () => {
         onPress={handleSignup}
         disabled={isLoading}
       >
-        <Text style={styles.buttonText}>{isLoading ? 'Signing up...' : 'Sign Up'}</Text>
+        <Text style={styles.buttonText}>{isLoading ? '...' : 'Sign Up'}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,7 +1,6 @@
 import {
   collection,
   getDocs,
-  addDoc,
   query,
   orderBy,
   DocumentData,
@@ -9,11 +8,11 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { db } from '@/src/services/firebase/Firestore';
-import { VoiceCard, VoiceCardInput } from '@/src/models/VoiceCard';
-import { VoiceCardRepository } from './VoiceCardRepository';
-import { FIREBASE_COLLECTION } from '../constants/FirebasCollections';
+import { VoiceCardRepository } from '@/src/repositories/VoiceCardRepository';
+import { FIREBASE_COLLECTION } from '@/src/constants/FirebasCollections';
+import { VoiceCard, VoiceCardInput } from '@/src/models/VoiceCard.Model';
 
-export class FirebaseVoiceCardRepository implements VoiceCardRepository {
+export class VoiceCardService implements VoiceCardRepository {
   private collectionRef = collection(db, FIREBASE_COLLECTION.VoiceCards);
 
   async fetchVoiceCards(): Promise<VoiceCard[]> {

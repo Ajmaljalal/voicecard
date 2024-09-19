@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { COLORS } from '../../../constants/Colors';
-import { useLoginMutation } from '../../../store/api/AuthApi'; // Assume you have an AuthApi setup
+import { COLORS } from '@/src/constants/Colors';
+import { useLoginMutation } from '@/src/store/api/AuthApi'; // Assume you have an AuthApi setup
+import { useAppDispatch } from '@/src/store';
+import { closeModal } from '@/src/store/reducers/modal';
 
 const Login: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading }] = useLoginMutation();
@@ -15,10 +18,10 @@ const Login: React.FC = () => {
     }
     try {
       await login({ email, password }).unwrap();
-      Alert.alert('Success', 'Logged in successfully!');
+      dispatch(closeModal());
       // Handle post-login actions here
-    } catch (error) {
-      Alert.alert('Login Failed', error?.data?.message || 'An error occurred.');
+    } catch (error: any) {
+      Alert.alert('Login Failed', 'An error occurred, please try again.');
     }
   };
 
@@ -50,7 +53,7 @@ const Login: React.FC = () => {
         onPress={handleLogin}
         disabled={isLoading}
       >
-        <Text style={styles.buttonText}>{isLoading ? 'Logging in...' : 'Log In'}</Text>
+        <Text style={styles.buttonText}>{isLoading ? '...' : 'Log In'}</Text>
       </TouchableOpacity>
     </View>
   );

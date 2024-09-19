@@ -1,5 +1,8 @@
 import { getApps, initializeApp } from 'firebase/app';
-
+import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { FirebaseApp } from 'firebase/app';
+import { Auth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -11,5 +14,17 @@ const firebaseConfig = {
   measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+let app: FirebaseApp;
+let auth: Auth;
 
-export const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+  });
+} else {
+  app = getApps()[0];
+  auth = getAuth(app);
+}
+
+export { app, auth };

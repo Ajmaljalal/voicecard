@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 import AuthModal from './auth';
 import { Text } from 'react-native';
 
-import { closeModal } from '../../store/reducers/modal';
-import { ModalName } from '@/src/types/modal';
+import { closeModal } from '@/src/store/reducers/modal';
+import { ModalName as ModalNameType } from '@/src/types/modal';
 import { modalSelector } from '@/src/store/selectors/ModalSelector';
 import { useAppSelector } from '@/src/store';
-import VoiceRecorder from '../common/VoiceRecorder';
+import VoiceRecorder from '@/src/components/common/VoiceRecorder';
 
-const ModalComponents: Record<ModalName, React.FC<any>> = {
+const ModalComponents: Record<ModalNameType, React.FC<any>> = {
   'Auth': AuthModal,
   'Record': VoiceRecorder,
   'Settings': () => <Text>Settings</Text>
@@ -18,6 +18,7 @@ const ModalComponents: Record<ModalName, React.FC<any>> = {
 const ModalMapper: React.FC = () => {
   const dispatch = useDispatch();
   const { currentModal, modalProps } = useAppSelector(modalSelector);
+  const handleClose = () => dispatch(closeModal());
 
   if (!currentModal) return null;
 
@@ -27,8 +28,6 @@ const ModalMapper: React.FC = () => {
     console.warn(`No component found for modal: ${currentModal}`);
     return null;
   }
-
-  const handleClose = () => dispatch(closeModal());
 
   return <Model visible={true} onClose={handleClose} {...modalProps} />;
 };

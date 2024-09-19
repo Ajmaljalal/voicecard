@@ -3,13 +3,13 @@ import { voiceCardApi } from './api/VoiceCardApi';
 import { authApi } from './api/AuthApi';
 import rootReducer from './reducers';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import api from './api';
 
 
 export const store = configureStore({
   reducer: {
     rootReducer,
-    [voiceCardApi.reducerPath]: voiceCardApi.reducer,
-    [authApi.reducerPath]: authApi.reducer,
+    [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(voiceCardApi.middleware, authApi.middleware),

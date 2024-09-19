@@ -8,7 +8,7 @@ import {
   Modal,
 } from 'react-native';
 import { Audio } from 'expo-av';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/Colors';
 import LoadingSpinner from './LoadingSpinner';
 import { uploadVoiceToFirebase } from '../../services/firebase/StorageService';
@@ -247,7 +247,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
             </View>
           )}
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <FontAwesome name="close" size={24} color={COLORS.muted} />
+            <Ionicons name="close" size={24} color={COLORS.dark} />
           </TouchableOpacity>
         </View>
       </View>

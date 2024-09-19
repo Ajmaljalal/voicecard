@@ -1,44 +1,90 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { AuthRepository } from '@/src/repositories/AuthRepository';
+import AuthService from '@/src/services/firebase/AuthService';
+import api from './index';
+import { RtkQueryTagTypes } from '@/src/constants/RtkQueryTagTeyps';
+import { UserRepository } from '@/src/repositories/UserRepository';
+import UserService from '@/src/services/firebase/UserService';
+import { AppUser } from '@/src/types/User';
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
+const authService: AuthRepository = new AuthService();
+const userService: UserRepository = new UserService();
 
-interface SignupRequest {
-  username: string;
-  email: string;
-  password: string;
-}
-
-interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    username: string;
-    email: string;
-  };
-}
-
-export const authApi = createApi({
-  reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://your-api-domain.com/api/' }),
+export const authApi = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
-    login: builder.mutation<AuthResponse, LoginRequest>({
-      query: (credentials) => ({
-        url: 'auth/login',
-        method: 'POST',
-        body: credentials,
-      }),
+    login: builder.mutation<{ success: boolean }, { email: string; password: string }>({
+      queryFn: async ({ email, password }) => {
+        try {
+          await authService.signIn(email, password);
+          return { data: { success: true } };
+        } catch (error) {
+          return {
+            error: {
+              status: 'CUSTOM_ERROR',
+              data: error instanceof Error ? error.message : 'An unknown error occurred'
+            }
+          };
+        }
+      },
+      invalidatesTags: [{ type: RtkQueryTagTypes.Auth, id: 'AppUser' }],
     }),
-    signup: builder.mutation<AuthResponse, SignupRequest>({
-      query: (newUser) => ({
-        url: 'auth/signup',
-        method: 'POST',
-        body: newUser,
-      }),
+    signup: builder.mutation<{ success: boolean }, { user: AppUser }>({
+      queryFn: async ({ user }) => {
+        const { email, password } = user;
+        try {
+          const userCredential = await authService.signUp(email, password as string);
+          user.authId = userCredential.user.uid;
+          delete user.password;
+          await userService.registerUser(user);
+          return { data: { success: true } };
+        } catch (error) {
+          return {
+            error: {
+              status: 'CUSTOM_ERROR',
+              data: error instanceof Error ? error.message : 'An unknown error occurred'
+            }
+          };
+        }
+      },
+      invalidatesTags: [{ type: RtkQueryTagTypes.Auth, id: 'AppUser' }],
+    }),
+    signOut: builder.mutation<void, void>({
+      queryFn: async () => {
+        try {
+          await authService.signOut();
+          return { data: undefined };
+        } catch (error) {
+          return { error: { status: 'error', data: error } };
+        }
+      },
+      invalidatesTags: [{ type: RtkQueryTagTypes.Auth, id: 'AppUser' }],
+    }),
+    getCurrentUser: builder.query<AppUser | null, void>({
+      queryFn: async () => {
+        try {
+          const currentUser = await authService.getCurrentUser();
+          if (currentUser) {
+            const user = await userService.getUser(currentUser.uid);
+            return { data: user };
+          }
+          return { data: null };
+        } catch (error) {
+          return {
+            error: {
+              status: 'error',
+              data: "Error fetching current user"
+            }
+          };
+        }
+      },
+      providesTags: [{ type: RtkQueryTagTypes.Auth, id: 'AppUser' }],
     }),
   }),
 });
 
-export const { useLoginMutation, useSignupMutation } = authApi;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useSignOutMutation,
+  useGetCurrentUserQuery,
+} = authApi;

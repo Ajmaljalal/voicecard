@@ -6,12 +6,18 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useAppDispatch } from '@/src/store';
 import { openModal } from '@/src/store/reducers/modal';
 import { ModalName } from '@/src/constants/Modal';
+import { useGetCurrentUserQuery } from '@/src/store/api/AuthApi';
 
 const VoiceRecordButton: React.FC = () => {
+  const { data: currentUser, isLoading: isCurrentUserLoading } = useGetCurrentUserQuery();
   const dispatch = useAppDispatch()
 
   const openVoiceRecordModal = () => {
-    dispatch(openModal({ modalName: ModalName.Record }))
+    if (!currentUser) {
+      dispatch(openModal({ modalName: ModalName.Auth }))
+    } else {
+      dispatch(openModal({ modalName: ModalName.Record }))
+    }
   }
 
   return (
