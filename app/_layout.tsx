@@ -12,6 +12,8 @@ import { openModal } from '@/src/store/reducers/modal';
 import { useEffect, useState } from 'react';
 import AuthService from '@/src/services/firebase/AuthService';
 import { auth } from '@/src/services/firebase/config';
+import { AudioProvider } from '@/src/context/AudioContext';
+import GlobalAudioPlayer from '@/src/components/common/GlobalAudioPlayer';
 
 const HeaderButton = ({ iconName, onPress }: { iconName: keyof typeof Ionicons.glyphMap, onPress: () => void }) => (
   <TouchableOpacity onPress={onPress}>
@@ -64,7 +66,7 @@ function StackNavigator() {
   };
 
   return (
-    <>
+    <AudioProvider>
       <Stack initialRouteName='index' screenOptions={screenOptions}>
         <Stack.Screen
           name="index"
@@ -81,7 +83,8 @@ function StackNavigator() {
         <Stack.Screen name="profile/index" options={{ title: 'Profile' }} />
       </Stack>
       <ModalMapper />
-    </>
+      <GlobalAudioPlayer />
+    </AudioProvider>
   );
 }
 

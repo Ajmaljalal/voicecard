@@ -5,23 +5,12 @@ import SoundWaves from '@/src/components/common/SoundWaves';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/src/constants/Colors';
 import { VoiceCard } from '@/src/models/VoiceCard.Model';
+import { useAudioPlayer } from '@/src/hooks/useAudioPlayer';
 
 export interface VoiceCardReplyProps extends VoiceCard { }
 
 const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ author, audioUrl }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-
-  const handlePlayPause = async () => {
-    if (isPlaying) {
-      await sound?.pauseAsync();
-    } else {
-      const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl });
-      setSound(newSound);
-      await newSound.playAsync();
-    }
-    setIsPlaying(!isPlaying);
-  };
+  const { isPlaying, togglePlayback } = useAudioPlayer();
 
   return (
     <View style={styles.replyContainer}>
@@ -36,7 +25,7 @@ const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ author, audioUrl }) => 
       <View style={styles.audioContainer}>
         <SoundWaves position={0} duration={2} waveCount={50} />
       </View>
-      <TouchableOpacity onPress={handlePlayPause}>
+      <TouchableOpacity onPress={() => togglePlayback(audioUrl)}>
         <Ionicons name={isPlaying ? 'pause' : 'play'} size={30} color={COLORS.red} />
       </TouchableOpacity>
     </View>
