@@ -1,20 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Alert,
   Modal,
 } from 'react-native';
-import { Audio } from 'expo-av';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../../constants/Colors';
 import LoadingSpinner from '../../common/LoadingSpinner';
-import { uploadVoiceToFirebase } from '../../../services/firebase/StorageService';
-import { useAddVoiceCardMutation } from '../../../store/api/VoiceCardApi';
-import { VoiceCardInput } from '../../../models/VoiceCard.Model';
 import { useGetCurrentUserQuery } from '@/src/store/api/AuthApi';
+import { useAudioRecorder } from '@/src/hooks/useAudioRecorder';
 
 interface VoiceRecorderProps {
   visible: boolean;
@@ -28,111 +24,23 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   parentVoiceCardId,
 }) => {
   const { data: user } = useGetCurrentUserQuery();
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [addVoiceCard] = useAddVoiceCardMutation();
+  const {
+    isRecording,
+    isPaused,
+    isLoading,
+    startRecording,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+  } = useAudioRecorder(user, parentVoiceCardId);
+
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const barAnimations = useRef(Array(20).fill(0).map(() => new Animated.Value(0))).current;
 
-  const startRecording = async () => {
-    try {
-      setIsRecording(true);
-      const { status } = await Audio.requestPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Required', 'Permission to access microphone is required!');
-        setIsRecording(false);
-        return;
-      }
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-
-      if (recording && !recording._isDoneRecording) {
-        await resumeRecording();
-      } else {
-        const { recording: newRecording } = await Audio.Recording.createAsync(
-          Audio.RecordingOptionsPresets.HIGH_QUALITY
-        );
-        setRecording(newRecording);
-      }
-    } catch (err) {
-      console.error('Failed to start recording', err);
-      setIsRecording(false);
-      setIsPaused(false);
-    }
-  };
-
-  const pauseRecording = async () => {
-    if (recording) {
-      await recording.pauseAsync();
-      setIsPaused(true);
-    }
-  };
-
-  const resumeRecording = async () => {
-    if (recording) {
-      await recording.startAsync();
-      setIsPaused(false);
-    }
-  };
-
-  const stopRecording = async () => {
-    if (!user || !user.authId) {
-      Alert.alert('Oops', 'You need to login first.');
-      return;
-    }
-    try {
-      if (recording) {
-        setIsRecording(false);
-        setIsPaused(false);
-        setIsLoading(true);
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        if (!uri) {
-          throw new Error('Recording URI is null');
-        }
-
-        const status = await recording.getStatusAsync();
-        const duration = status.durationMillis;
-
-        const audioId = `${user.authId}-${Date.now().toString()}`;
-        const { audioUrl } = await uploadVoiceToFirebase(uri, audioId);
-
-        // Create a new VoiceCard with the audio URL
-        const newVoiceCard: VoiceCardInput = {
-          parentId: parentVoiceCardId || null,
-          author: {
-            id: user.authId,
-            name: user.username,
-          },
-          location: {
-            city: 'Sacramento', // TODO: Replace with actual location
-            state: 'CA', // TODO: Replace with actual location
-            country: 'USA', // TODO: Replace with actual location
-            zipcode: '95814',
-          },
-          audioDuration: duration,
-          audioUrl: audioUrl, // Use the URL from Firebase Storage
-          title: 'Reply Voice Card',
-          description: 'Reply to your voice card.',
-        };
-
-        await addVoiceCard(newVoiceCard);
-        setIsLoading(false);
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-        });
-        Alert.alert('Recording Saved', 'Your reply has been recorded.');
-        onClose(); // Close the modal after successful upload
-      }
-    } catch (err) {
-      console.error('Failed to stop recording', err);
-      setIsRecording(false);
-      setIsPaused(false);
-      setIsLoading(false);
+  const handleStopRecording = async () => {
+    const success = await stopRecording();
+    if (success) {
+      onClose();
     }
   };
 
@@ -222,7 +130,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
             ) : (
               <Animated.View style={{ transform: [{ scale: pulseAnim }], }}>
                 <TouchableOpacity
-                  onPress={isRecording ? stopRecording : startRecording}
+                  onPress={isRecording ? handleStopRecording : startRecording}
                   style={[styles.button, isRecording ? styles.stopButton : styles.recordButton]}
                 >
                   {isRecording ? (
