@@ -6,6 +6,7 @@ import {
   DocumentData,
   doc,
   setDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '@/src/services/firebase/Firestore';
 import { VoiceCardRepository } from '@/src/repositories/VoiceCardRepository';
@@ -16,7 +17,11 @@ export class VoiceCardService implements VoiceCardRepository {
   private collectionRef = collection(db, FIREBASE_COLLECTION.VoiceCards);
 
   async fetchVoiceCards(): Promise<VoiceCard[]> {
-    const q = query(this.collectionRef, orderBy('createdAt', 'desc'));
+    const q = query(
+      this.collectionRef,
+      orderBy('createdAt', 'desc'),
+      where('parentId', '==', null)
+    );
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => {
       const data = doc.data() as DocumentData;
