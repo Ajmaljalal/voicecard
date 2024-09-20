@@ -37,6 +37,28 @@ export class VoiceCardService implements VoiceCardRepository {
     });
   }
 
+  async fetchVoiceCardComments(parentId: string): Promise<VoiceCard[]> {
+    const q = query(
+      this.collectionRef,
+      orderBy('createdAt', 'desc'),
+      where('parentId', '==', parentId)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => {
+      const data = doc.data() as DocumentData;
+      return {
+        id: doc.id,
+        author: data.author,
+        location: data.location,
+        createdAt: data.createdAt,
+        audioUrl: data.audioUrl,
+        title: data.title,
+        description: data.description,
+        parentId: data.parentId,
+      } as VoiceCard;
+    });
+  }
+
   async addVoiceCard(card: VoiceCardInput): Promise<void> {
     const docRef = doc(this.collectionRef);
     await setDoc(docRef, {

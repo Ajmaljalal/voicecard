@@ -26,6 +26,19 @@ export const voiceCardApi = api.injectEndpoints({
           ]
           : [{ type: RtkQueryTagTypes.VoiceCards, id: 'VoiceCardsList' }],
     }),
+
+    getVoiceCardComments: builder.query<VoiceCard[], string>({
+      queryFn: async (parentId) => {
+        try {
+          const voiceCards = await voiceCardService.fetchVoiceCardComments(parentId);
+          return { data: voiceCards };
+        } catch (error) {
+          return { error: { status: 'error', data: error } };
+        }
+      },
+      keepUnusedDataFor: 0, // prevent caching
+    }),
+
     addVoiceCard: builder.mutation<string, VoiceCardInput>({
       queryFn: async (voiceCard) => {
         try {
@@ -42,5 +55,6 @@ export const voiceCardApi = api.injectEndpoints({
 
 export const {
   useGetVoiceCardsQuery,
+  useGetVoiceCardCommentsQuery,
   useAddVoiceCardMutation,
 } = voiceCardApi;

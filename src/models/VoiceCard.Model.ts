@@ -1,7 +1,10 @@
 
 export interface VoiceCard {
   id: string;
-  author: string;
+  author: {
+    id: string;
+    name: string;
+  };
   location?: {
     city: string;
     state: string;

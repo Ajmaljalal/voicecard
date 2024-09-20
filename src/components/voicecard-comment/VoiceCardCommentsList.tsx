@@ -1,10 +1,11 @@
 import React from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import VoiceCardComment from './VoiceCardComment';
+import { VoiceCard } from '@/src/models/VoiceCard.Model';
 
 
 interface VoiceCardRepliesListProps {
-  replies: any[];
+  replies: VoiceCard[];
 }
 
 const VoiceCardRepliesList: React.FC<VoiceCardRepliesListProps> = ({ replies }) => {
@@ -21,6 +22,7 @@ const VoiceCardRepliesList: React.FC<VoiceCardRepliesListProps> = ({ replies }) 
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 4,
     paddingBottom: 24,
     gap: 4,
   },

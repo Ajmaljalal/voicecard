@@ -4,17 +4,11 @@ import { Audio } from 'expo-av'; // Ensure you have this package installed
 import SoundWaves from '@/src/components/common/SoundWaves';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/src/constants/Colors';
+import { VoiceCard } from '@/src/models/VoiceCard.Model';
 
-export interface VoiceCardReplyProps {
-  id: string;
-  owner: {
-    name: string;
-    avatarUrl: string; // URL for the avatar image
-  };
-  audioUrl: string;
-}
+export interface VoiceCardReplyProps extends VoiceCard { }
 
-const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ owner, audioUrl }) => {
+const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ author, audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
@@ -36,7 +30,7 @@ const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ owner, audioUrl }) => {
           style={styles.ownerName}
           numberOfLines={1} // Prevents text from wrapping
         >
-          {`${owner.name}`}
+          {`${author.name}`}
         </Text>
       </View>
       <View style={styles.audioContainer}>
@@ -54,7 +48,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: 4,
     paddingHorizontal: 8,
     borderWidth: 0.5,
     borderColor: COLORS.muted,
