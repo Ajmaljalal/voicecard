@@ -62,7 +62,9 @@ const FeedScreen: React.FC = () => {
           <Text>You have no voice cards</Text>
         </View>
       )}
-      <VoiceRecordButton />
+      <View style={styles.recordButtonContainer}>
+        <VoiceRecordButton size={32} />
+      </View>
     </View>
   );
 };
@@ -88,6 +90,11 @@ const styles = StyleSheet.create({
   },
   loader: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  recordButtonContainer: {
+    marginBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
