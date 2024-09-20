@@ -9,6 +9,9 @@ import { useGetCurrentUserQuery, useSignOutMutation } from '@/src/store/api/Auth
 import { Ionicons } from '@expo/vector-icons';
 import { ModalName } from '@/src/constants/Modal';
 import { openModal } from '@/src/store/reducers/modal';
+import { useEffect, useState } from 'react';
+import AuthService from '@/src/services/firebase/AuthService';
+import { auth } from '@/src/services/firebase/config';
 
 const HeaderButton = ({ iconName, onPress }: { iconName: keyof typeof Ionicons.glyphMap, onPress: () => void }) => (
   <TouchableOpacity onPress={onPress}>
@@ -16,12 +19,34 @@ const HeaderButton = ({ iconName, onPress }: { iconName: keyof typeof Ionicons.g
   </TouchableOpacity>
 );
 
+
 function StackNavigator() {
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [signOut] = useSignOutMutation();
-  const { data: user } = useGetCurrentUserQuery();
-  const isLoggedIn = !!user;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: user, refetch } = useGetCurrentUserQuery();
+
+  useEffect(() => {
+    const checkAuthState = async () => {
+      const authUser = new AuthService().getCurrentUser();
+      setIsLoggedIn(!!authUser);
+      if (authUser) {
+        refetch();
+      }
+    };
+
+    checkAuthState();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+      if (user) {
+        refetch();
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleAuthAction = async () => {
     if (isLoggedIn) {

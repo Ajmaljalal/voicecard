@@ -13,7 +13,7 @@ class AuthService implements AuthRepository {
   private authInstance = auth;
 
 
-  async getCurrentUser() {
+  getCurrentUser(): User | null {
     return this.authInstance.currentUser;
   }
 

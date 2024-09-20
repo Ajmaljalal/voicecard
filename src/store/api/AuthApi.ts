@@ -62,9 +62,9 @@ export const authApi = api.injectEndpoints({
     getCurrentUser: builder.query<AppUser | null, void>({
       queryFn: async () => {
         try {
-          const currentUser = await authService.getCurrentUser();
-          if (currentUser) {
-            const user = await userService.getUser(currentUser.uid);
+          const authUser = authService.getCurrentUser();
+          if (authUser) {
+            const user = await userService.getUser(authUser.uid);
             return { data: user };
           }
           return { data: null };

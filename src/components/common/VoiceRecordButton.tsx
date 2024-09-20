@@ -7,13 +7,16 @@ import { useAppDispatch } from '@/src/store';
 import { openModal } from '@/src/store/reducers/modal';
 import { ModalName } from '@/src/constants/Modal';
 import { useGetCurrentUserQuery } from '@/src/store/api/AuthApi';
+import AuthService from '@/src/services/firebase/AuthService';
 
 const VoiceRecordButton: React.FC = () => {
   const { data: currentUser, isLoading: isCurrentUserLoading } = useGetCurrentUserQuery();
+  const authUser = new AuthService().getCurrentUser()
   const dispatch = useAppDispatch()
+  const isAuth = !!currentUser || !!authUser
 
   const openVoiceRecordModal = () => {
-    if (!currentUser) {
+    if (!isAuth) {
       dispatch(openModal({ modalName: ModalName.Auth }))
     } else {
       dispatch(openModal({ modalName: ModalName.Record }))
