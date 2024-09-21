@@ -13,7 +13,7 @@ interface VoicePlayerProps {
 
 const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceCard }) => {
   const dispatch = useAppDispatch();
-  const { currentAudioUrl, isPlaying } = useAppSelector(audioSelector);
+  const { currentAudioUrl, status } = useAppSelector(audioSelector);
 
   const handlePlay = () => {
     dispatch(playAudio({
@@ -27,30 +27,16 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceCard }) => {
     }));
   };
 
-  const isActive = isPlaying && currentAudioUrl === voiceCard.audioUrl;
-
+  const isActive = status === 'playing' && currentAudioUrl === voiceCard.audioUrl;
 
   return (
     <View style={styles.playerContainer}>
-      {/* <SoundWaves position={position} duration={duration} /> */}
-      {/* <View style={styles.waveformProgress}> */}
-      {/* <Text style={styles.timeTextPosition}>{formatTime(position)}</Text> */}
       <TouchableOpacity onPress={handlePlay} style={styles.playButton}>
         <Ionicons name={isActive ? "pause" : "play"} size={30} color={COLORS.red} />
       </TouchableOpacity>
-      {/* <Text style={styles.timeTextDuration}>{formatTime(duration)}</Text> */}
-      {/* </View> */}
     </View>
   );
 };
-
-// // Utility function to format time
-// const formatTime = (millis: number) => {
-//   const totalSeconds = Math.floor(millis / 1000);
-//   const minutes = Math.floor(totalSeconds / 60);
-//   const seconds = totalSeconds % 60;
-//   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-// };
 
 const styles = StyleSheet.create({
   playerContainer: {
@@ -60,35 +46,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  controlsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   playButton: {
     height: 50,
     width: 50,
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  timeTextDuration: {
-    fontSize: 12,
-    color: COLORS.text,
-    width: 50,
-    textAlign: 'right',
-  },
-  timeTextPosition: {
-    fontSize: 12,
-    color: COLORS.text,
-    width: 50,
-    textAlign: 'left',
-  },
-  waveformProgress: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    alignItems: 'center',
   },
 });
 

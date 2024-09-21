@@ -6,20 +6,16 @@ import { useAppDispatch, useAppSelector } from '@/src/store';
 import { pauseAudio, resumeAudio, stopAudio } from '@/src/store/reducers/audio';
 import { audioSelector } from '@/src/store/selectors/AudioSelector';
 
-
 const GlobalAudioPlayer = () => {
   const dispatch = useAppDispatch();
-  const { currentAudioUrl, isPlaying, position, duration } = useAppSelector(audioSelector);
+  const { currentAudioUrl, status, position, duration } = useAppSelector(audioSelector);
 
-
-  const togglePlayback = () => isPlaying ? handlePause() : handleResume();
-
-  const handlePause = () => {
-    dispatch(pauseAudio());
-  };
-
-  const handleResume = () => {
-    dispatch(resumeAudio());
+  const togglePlayback = () => {
+    if (status === 'paused') {
+      dispatch(resumeAudio());
+    } else if (status === 'playing') {
+      dispatch(pauseAudio());
+    }
   };
 
   const handleStop = () => {
@@ -41,7 +37,7 @@ const GlobalAudioPlayer = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={togglePlayback} style={styles.controlButton}>
-        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color={COLORS.background} />
+        <Ionicons name={status === 'paused' ? "play" : "pause"} size={24} color={COLORS.background} />
       </TouchableOpacity>
       <View style={styles.infoContainer}>
         <Text style={styles.audioTitle}>Now Playing</Text>

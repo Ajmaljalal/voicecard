@@ -13,7 +13,7 @@ const VoiceCardRepliesList: React.FC<VoiceCardRepliesListProps> = ({ replies }) 
     <FlatList
       data={replies}
       keyExtractor={(reply) => reply.id.toString()}
-      renderItem={({ item }) => <VoiceCardComment {...item} />}
+      renderItem={({ item }) => <VoiceCardComment voiceCard={item} />}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.container}
     />

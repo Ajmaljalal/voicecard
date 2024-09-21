@@ -1,7 +1,7 @@
 import DetailScreen from "@/src/screens/VoiceCardDetails";
 import { useLocalSearchParams } from "expo-router";
 import { voiceCardApi } from "@/src/store/api/VoiceCardApi";
-import { VoiceCardProps } from "@/src/components/VoiceCard";
+import { VoiceCardProps } from "@/src/components/voicecard/VoiceCard";
 
 const VoiceCardDetail = () => {
   const { id } = useLocalSearchParams();

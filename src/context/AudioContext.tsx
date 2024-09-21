@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useRef, useEffect, useCallback } from 'react';
 import { Audio, AVPlaybackStatus, AVPlaybackStatusSuccess } from 'expo-av';
-import { useDispatch, useSelector } from 'react-redux';
 import { stopAudio, updateAudioState } from '@/src/store/reducers/audio';
 import { audioSelector } from '../store/selectors/AudioSelector';
+import { useAppDispatch, useAppSelector } from '../store';
 
 interface AudioContextProps {
   // The context can expose additional functionalities if needed
@@ -19,26 +19,26 @@ export const useAudioContext = (): AudioContextProps => {
 };
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const dispatch = useDispatch();
-  const { currentAudioUrl, isPlaying } = useSelector(audioSelector);
+  const dispatch = useAppDispatch();
+  const { currentAudioUrl, status } = useAppSelector(audioSelector);
   const soundRef = useRef<Audio.Sound | null>(null);
-  const isInitialMount = useRef(true);
+  const isInitialLoad = useRef<boolean>(true);
 
   const onPlaybackStatusUpdate = useCallback(
-    (status: AVPlaybackStatus) => {
-      if (status.isLoaded) {
+    (statusObj: AVPlaybackStatus) => {
+      if (statusObj.isLoaded) {
         dispatch(updateAudioState({
-          isPlaying: status.isPlaying,
-          position: status.positionMillis,
-          duration: status.durationMillis || 0,
+          status: statusObj.isPlaying ? 'playing' : (statusObj.isBuffering ? 'paused' : 'paused'),
+          position: statusObj.positionMillis,
+          duration: statusObj.durationMillis || 0,
         }));
 
-        if (status.didJustFinish && !status.isLooping) {
+        if (statusObj.didJustFinish && !statusObj.isLooping) {
           dispatch(stopAudio());
         }
       } else {
-        if (status.error) {
-          console.error(`Playback Error: ${status.error}`);
+        if (statusObj.error) {
+          console.error(`Playback Error: ${statusObj.error}`);
           dispatch(stopAudio());
         }
       }
@@ -60,10 +60,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     soundRef.current = sound;
   }, [onPlaybackStatusUpdate]);
 
-  // Effect to handle playing/resuming/stopping based on Redux state
+  // Effect to handle initial loading and playing of the audio
   useEffect(() => {
-    const handleAudioPlayback = async () => {
-
+    const handleInitialAudioPlayback = async () => {
       if (!currentAudioUrl) {
         // No audio to play, stop any existing sound
         if (soundRef.current) {
@@ -74,37 +73,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return;
       }
 
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        // Initial mount, load the sound if necessary
-        if (!soundRef.current || (soundRef.current && currentAudioUrl !== ((await soundRef.current.getStatusAsync()) as AVPlaybackStatusSuccess).uri)) {
-          await loadSound(currentAudioUrl);
-        }
+      await loadSound(currentAudioUrl);
 
-        if (isPlaying && soundRef.current) {
-          await (soundRef.current as Audio.Sound).playAsync();
-        }
-        return;
-      }
-
-      if (soundRef.current) {
-        const status = await soundRef.current.getStatusAsync();
-
-        if (isPlaying && status.isLoaded && !('error' in status) && !status.isPlaying) {
-          await (soundRef.current as Audio.Sound).playAsync();
-        } else if (!isPlaying && status.isLoaded && !('error' in status) && status.isPlaying) {
-          await soundRef.current.pauseAsync();
-        }
-      } else {
-        // If no sound is loaded, load and play
-        await loadSound(currentAudioUrl);
-        if (isPlaying && soundRef.current) {
-          await (soundRef.current as Audio.Sound).playAsync();
-        }
+      if (status === 'playing' && soundRef.current) {
+        await soundRef.current.playAsync();
       }
     };
 
-    handleAudioPlayback();
+    handleInitialAudioPlayback();
 
     // Cleanup when component unmounts
     return () => {
@@ -114,6 +90,28 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
   }, [currentAudioUrl]);
+
+  // Effect to handle play/pause after the initial load
+  useEffect(() => {
+    const handlePlayPause = async () => {
+      if (!soundRef.current) return;
+
+      const soundStatus = await soundRef.current.getStatusAsync() as AVPlaybackStatusSuccess;
+
+      if (status === 'playing' && !soundStatus.isPlaying) {
+        await soundRef.current.playAsync();
+      } else if (status === 'paused' && soundStatus.isPlaying) {
+        await soundRef.current.pauseAsync();
+      }
+    };
+
+    // To prevent this effect from running on the initial load
+    if (!isInitialLoad.current) {
+      handlePlayPause();
+    } else {
+      isInitialLoad.current = false;
+    }
+  }, [status]);
 
   return (
     <AudioContext.Provider value={{}}>

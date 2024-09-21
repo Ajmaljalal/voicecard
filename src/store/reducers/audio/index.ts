@@ -7,10 +7,12 @@ export interface AudioMetadata {
   author: string;
 }
 
+type AudioStatus = 'stopped' | 'playing' | 'paused';
+
 interface AudioState {
   currentAudioUrl: string | null;
   metadata: AudioMetadata | null;
-  isPlaying: boolean;
+  status: AudioStatus;
   position: number;
   duration: number;
 }
@@ -18,7 +20,7 @@ interface AudioState {
 const initialState: AudioState = {
   currentAudioUrl: null,
   metadata: null,
-  isPlaying: false,
+  status: 'stopped',
   position: 0,
   duration: 0,
 };
@@ -29,7 +31,7 @@ interface PlayAudioPayload {
 }
 
 interface UpdateAudioStatePayload {
-  isPlaying?: boolean;
+  status?: AudioStatus;
   position?: number;
   duration?: number;
 }
@@ -39,27 +41,46 @@ const audioSlice = createSlice({
   initialState,
   reducers: {
     playAudio(state, action: PayloadAction<PlayAudioPayload>) {
+      if (state.currentAudioUrl || state.status === 'playing') {
+        state.currentAudioUrl = null
+        state.metadata = null;
+        state.status = 'stopped';
+        state.position = 0;
+        state.duration = 0;
+      }
       state.currentAudioUrl = action.payload.audioUrl;
       state.metadata = action.payload.metadata;
-      state.isPlaying = true;
+      state.status = 'playing';
       state.position = 0;
       state.duration = 0;
     },
     pauseAudio(state) {
-      state.isPlaying = false;
+      if (state.status === 'playing') {
+        state.status = 'paused';
+      }
     },
     resumeAudio(state) {
-      state.isPlaying = true;
+      if (state.status === 'paused') {
+        state.status = 'playing';
+      }
     },
     stopAudio(state) {
       state.currentAudioUrl = null;
       state.metadata = null;
-      state.isPlaying = false;
+      state.status = 'stopped';
       state.position = 0;
       state.duration = 0;
     },
     updateAudioState(state, action: PayloadAction<UpdateAudioStatePayload>) {
-      return { ...state, ...action.payload };
+      if (action.payload.status) {
+        state.status = action.payload.status;
+      }
+      if (action.payload.position !== undefined) {
+        state.position = action.payload.position;
+      }
+      if (action.payload.duration !== undefined) {
+        state.duration = action.payload.duration;
+      }
     },
   },
 });
