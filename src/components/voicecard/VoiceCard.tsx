@@ -4,6 +4,7 @@ import { COLORS } from '@/src/constants/Colors';
 import VoicePlayer from '@/src/components/voice-player/VoicePlayer';
 import { useRouter } from 'expo-router';
 import VoiceCardFooter from './VoiceCardFooter';
+import SoundWaves from '../common/SoundWaves';
 
 export interface VoiceCardProps {
   id: string;
@@ -35,6 +36,17 @@ const VoiceCard = ({ id, author, audioUrl, title, description }: VoiceCardProps)
         <Text style={styles.author}>{author.name}</Text>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
+      </View>
+      <View style={styles.audioContainer}>
+        <SoundWaves waveCount={100} voiceCard={
+          {
+            id,
+            author,
+            audioUrl,
+            title,
+            description,
+          }
+        } />
       </View>
       <VoicePlayer voiceCard={{
         id,
@@ -85,6 +97,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: COLORS.text,
+  },
+  audioContainer: {
+    flex: 1,
   },
   cardFooter: {
     flexDirection: 'row',

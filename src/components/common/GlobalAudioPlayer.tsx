@@ -8,7 +8,7 @@ import { audioSelector } from '@/src/store/selectors/AudioSelector';
 
 const GlobalAudioPlayer = () => {
   const dispatch = useAppDispatch();
-  const { currentAudioUrl, status, position, duration } = useAppSelector(audioSelector);
+  const { currentAudioUrl, status, position, duration, metadata } = useAppSelector(audioSelector);
 
   const togglePlayback = () => {
     if (status === 'paused') {
@@ -37,14 +37,15 @@ const GlobalAudioPlayer = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={togglePlayback} style={styles.controlButton}>
-        <Ionicons name={status === 'paused' ? "play" : "pause"} size={24} color={COLORS.background} />
+        <Ionicons name={status === 'paused' ? "play" : "pause"} size={32} color={COLORS.background} />
       </TouchableOpacity>
       <View style={styles.infoContainer}>
-        <Text style={styles.audioTitle}>Now Playing</Text>
+        <Text style={styles.audioTitleHeader}>Now Playing</Text>
+        <Text style={styles.audioTitle}>{metadata?.title}</Text>
         <Text style={styles.timeText}>{formatTime(position)} / {formatTime(duration)}</Text>
       </View>
       <TouchableOpacity onPress={handleStop} style={styles.closeButton}>
-        <Ionicons name="close" size={24} color={COLORS.background} />
+        <Ionicons name="close" size={32} color={COLORS.background} />
       </TouchableOpacity>
     </View>
   );
@@ -56,9 +57,8 @@ const styles = StyleSheet.create({
     bottom: 0, // You can change to 'top' if preferred
     left: 0,
     right: 0,
-    backgroundColor: COLORS.dark,
+    backgroundColor: "black",
     flexDirection: 'row',
-    alignItems: 'center',
     padding: 10,
     zIndex: 1000,
     height: 100,
@@ -71,6 +71,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
   },
+  audioTitleHeader: {
+    color: COLORS.muted,
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
   audioTitle: {
     color: COLORS.background,
     fontSize: 16,
@@ -78,7 +84,8 @@ const styles = StyleSheet.create({
   },
   timeText: {
     color: COLORS.background,
-    fontSize: 14,
+    fontSize: 12,
+    marginTop: 5,
   },
   closeButton: {
     padding: 10,

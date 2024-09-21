@@ -7,6 +7,7 @@ import VoiceCardFooter from '@/src/components/voicecard/VoiceCardFooter';
 import VoiceCardRepliesList from '../voicecard-comment/VoiceCardCommentsList';
 import { useGetVoiceCardCommentsQuery } from '@/src/store/api/VoiceCardApi';
 import LoadingSpinner from '../common/LoadingSpinner';
+import SoundWaves from '../common/SoundWaves';
 
 const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, description }) => {
   const { data: replies, isLoading } = useGetVoiceCardCommentsQuery(id);
@@ -23,6 +24,17 @@ const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, titl
           <Text style={styles.author}>{author.name}</Text>
           <Text style={styles.title} numberOfLines={1}>{title} </Text>
           <Text style={styles.description} numberOfLines={2}>{description}</Text>
+        </View>
+        <View style={styles.audioContainer}>
+          <SoundWaves waveCount={100} voiceCard={
+            {
+              id,
+              author,
+              audioUrl,
+              title,
+              description,
+            }
+          } />
         </View>
         <VoicePlayer voiceCard={{
           id,
@@ -74,6 +86,9 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     height: 40,
     maxHeight: 40,
+  },
+  audioContainer: {
+    flex: 1,
   },
 });
 

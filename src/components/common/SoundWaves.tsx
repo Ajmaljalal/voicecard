@@ -1,24 +1,37 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/Colors';
-import { useAudioPlayer } from '@/src/hooks/useAudioPlayer';
+import { useAppSelector } from '@/src/store';
+import { audioSelector } from '@/src/store/selectors/AudioSelector';
+import { VoiceCard } from '@/src/models/VoiceCard.Model';
 
-const SoundWaves: React.FC<{ waveCount?: number }> = ({ waveCount = 100 }) => {
-  const { position, duration, currentAudioUrl } = useAudioPlayer();
-  const progressPercentage = duration > 0 ? (position / duration) * 100 : 0;
-  const progressIndex = Math.floor((progressPercentage / 100) * 100);
+interface SoundWavesProps {
+  waveCount?: number;
+  voiceCard: VoiceCard;
+}
 
+const SoundWaves = ({ waveCount = 100, voiceCard }: SoundWavesProps) => {
+  const { position, duration, currentAudioUrl, status } = useAppSelector(audioSelector);
+  const progressPercentage = duration > 0 ? (position / duration) * 95 : 0;
+  const progressIndex = Math.floor((progressPercentage / 100) * 95);
+
+  const isActive = currentAudioUrl === voiceCard.audioUrl && status === 'playing';
+
+  const waveHeights = useMemo(() =>
+    [...Array(waveCount)].map(() => Math.random() * 20 + 5),
+    [waveCount]
+  );
 
   return (
     <View style={styles.waveformContainer}>
-      {[...Array(waveCount)].map((_, index) => (
+      {waveHeights.map((height, index) => (
         <View
           key={index}
           style={[
             styles.waveformBar,
             {
-              height: Math.random() * 20 + 5,
-              backgroundColor: index < progressIndex ? COLORS.red : 'lightgray'
+              height: isActive ? Math.random() * 20 + 5 : height,
+              backgroundColor: isActive && index < progressIndex ? COLORS.red : COLORS.muted
             }
           ]}
         />

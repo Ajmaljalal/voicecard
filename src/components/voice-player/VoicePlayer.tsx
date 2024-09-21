@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { COLORS } from '@/src/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppDispatch, useAppSelector } from '@/src/store';
@@ -29,11 +29,21 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceCard }) => {
 
   const isActive = status === 'playing' && currentAudioUrl === voiceCard.audioUrl;
 
+
   return (
     <View style={styles.playerContainer}>
-      <TouchableOpacity onPress={handlePlay} style={styles.playButton}>
-        <Ionicons name={isActive ? "pause" : "play"} size={30} color={COLORS.red} />
-      </TouchableOpacity>
+      {!isActive ?
+        (
+          <TouchableOpacity onPress={handlePlay} style={styles.playButton}>
+            <Ionicons name={"play"} size={30} color={COLORS.red} />
+          </TouchableOpacity>
+        ) :
+        (
+          <Text>
+            Playing...
+          </Text>
+        )
+      }
     </View>
   );
 };

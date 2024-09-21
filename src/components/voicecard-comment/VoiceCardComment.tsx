@@ -42,7 +42,7 @@ const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ voiceCard }) => {
         </Text>
       </View>
       <View style={styles.audioContainer}>
-        <SoundWaves waveCount={100} />
+        <SoundWaves waveCount={100} voiceCard={voiceCard} />
       </View>
       <TouchableOpacity onPress={handlePlay}>
         <Ionicons name={isActive ? 'pause' : 'play'} size={30} color={COLORS.red} />
