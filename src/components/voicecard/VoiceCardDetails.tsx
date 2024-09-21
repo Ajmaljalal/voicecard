@@ -24,7 +24,13 @@ const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, titl
           <Text style={styles.title} numberOfLines={1}>{title} </Text>
           <Text style={styles.description} numberOfLines={2}>{description}</Text>
         </View>
-        <VoicePlayer audioUrl={audioUrl} />
+        <VoicePlayer voiceCard={{
+          id,
+          author,
+          audioUrl,
+          title,
+          description,
+        }} />
         <VoiceCardFooter parentVoiceCardId={id} />
       </View>
       <VoiceCardRepliesList replies={replies || []} />
@@ -35,6 +41,7 @@ const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, titl
 const styles = StyleSheet.create({
   container: {
     padding: 24,
+    width: '100%',
   },
   cardContainer: {
     backgroundColor: COLORS.background,

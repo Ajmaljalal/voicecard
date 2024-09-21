@@ -36,7 +36,13 @@ const VoiceCard = ({ id, author, audioUrl, title, description }: VoiceCardProps)
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
-      <VoicePlayer audioUrl={audioUrl} />
+      <VoicePlayer voiceCard={{
+        id,
+        author,
+        audioUrl,
+        title,
+        description,
+      }} />
       <VoiceCardFooter parentVoiceCardId={id} />
     </TouchableOpacity>
   );

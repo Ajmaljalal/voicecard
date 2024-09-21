@@ -1,39 +1,56 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS } from '@/src/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import SoundWaves from '@/src/components/common/SoundWaves';
-import { useAudioPlayer } from '@/src/hooks/useAudioPlayer';
+import { useAppDispatch, useAppSelector } from '@/src/store';
+import { playAudio } from '@/src/store/reducers/audio';
+import { audioSelector } from '@/src/store/selectors/AudioSelector';
+import { VoiceCard } from '@/src/models/VoiceCard.Model';
 
 interface VoicePlayerProps {
-  audioUrl: string;
+  voiceCard: VoiceCard;
 }
 
-const VoicePlayer: React.FC<VoicePlayerProps> = ({ audioUrl }) => {
-  const { isPlaying, position, duration, togglePlayback } = useAudioPlayer();
+const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceCard }) => {
+  const dispatch = useAppDispatch();
+  const { currentAudioUrl, isPlaying } = useAppSelector(audioSelector);
+
+  const handlePlay = () => {
+    dispatch(playAudio({
+      audioUrl: voiceCard.audioUrl,
+      metadata: {
+        voiceCardId: voiceCard.id,
+        title: voiceCard.title,
+        description: voiceCard.description,
+        author: voiceCard.author.name,
+      },
+    }));
+  };
+
+  const isActive = isPlaying && currentAudioUrl === voiceCard.audioUrl;
 
 
   return (
     <View style={styles.playerContainer}>
-      <SoundWaves position={position} duration={duration} />
-      <View style={styles.waveformProgress}>
-        <Text style={styles.timeTextPosition}>{formatTime(position)}</Text>
-        <TouchableOpacity onPress={() => togglePlayback(audioUrl)} style={styles.playButton}>
-          <Ionicons name={isPlaying ? "pause" : "play"} size={30} color={COLORS.red} />
-        </TouchableOpacity>
-        <Text style={styles.timeTextDuration}>{formatTime(duration)}</Text>
-      </View>
+      {/* <SoundWaves position={position} duration={duration} /> */}
+      {/* <View style={styles.waveformProgress}> */}
+      {/* <Text style={styles.timeTextPosition}>{formatTime(position)}</Text> */}
+      <TouchableOpacity onPress={handlePlay} style={styles.playButton}>
+        <Ionicons name={isActive ? "pause" : "play"} size={30} color={COLORS.red} />
+      </TouchableOpacity>
+      {/* <Text style={styles.timeTextDuration}>{formatTime(duration)}</Text> */}
+      {/* </View> */}
     </View>
   );
 };
 
-// Utility function to format time
-const formatTime = (millis: number) => {
-  const totalSeconds = Math.floor(millis / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-};
+// // Utility function to format time
+// const formatTime = (millis: number) => {
+//   const totalSeconds = Math.floor(millis / 1000);
+//   const minutes = Math.floor(totalSeconds / 60);
+//   const seconds = totalSeconds % 60;
+//   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+// };
 
 const styles = StyleSheet.create({
   playerContainer: {

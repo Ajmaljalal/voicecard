@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/Colors';
+import { useAudioPlayer } from '@/src/hooks/useAudioPlayer';
 
-const SoundWaves: React.FC<{ position: number; duration: number, waveCount?: number }> = ({ position, duration, waveCount = 100 }) => {
+const SoundWaves: React.FC<{ waveCount?: number }> = ({ waveCount = 100 }) => {
+  const { position, duration, currentAudioUrl } = useAudioPlayer();
   const progressPercentage = duration > 0 ? (position / duration) * 100 : 0;
-  const progressIndex = Math.floor((progressPercentage / 100) * 78);
+  const progressIndex = Math.floor((progressPercentage / 100) * 100);
+
 
   return (
     <View style={styles.waveformContainer}>

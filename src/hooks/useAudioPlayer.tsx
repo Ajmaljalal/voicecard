@@ -1,7 +1,7 @@
 import { useAudioContext } from '@/src/context/AudioContext';
 
 export const useAudioPlayer = () => {
-  const { playAudio, pauseAudio, togglePlayback, isPlaying, position, duration } = useAudioContext();
+  const { playAudio, pauseAudio, togglePlayback, isPlaying, position, duration, currentAudioUrl } = useAudioContext();
 
   const play = (audioUrl: string) => playAudio(audioUrl);
   const pause = () => pauseAudio();
@@ -14,5 +14,6 @@ export const useAudioPlayer = () => {
     play,
     pause,
     togglePlayback: toggle,
+    currentAudioUrl,
   };
 };

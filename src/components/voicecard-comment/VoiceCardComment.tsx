@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av'; // Ensure you have this package installed
 import SoundWaves from '@/src/components/common/SoundWaves';
@@ -10,7 +10,10 @@ import { useAudioPlayer } from '@/src/hooks/useAudioPlayer';
 export interface VoiceCardReplyProps extends VoiceCard { }
 
 const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ author, audioUrl }) => {
-  const { isPlaying, togglePlayback } = useAudioPlayer();
+  const { togglePlayback, currentAudioUrl } = useAudioPlayer();
+
+  const isActive = currentAudioUrl === audioUrl;
+  console.log('currentAudioUrl', currentAudioUrl);
 
   return (
     <View style={styles.replyContainer}>
@@ -23,10 +26,10 @@ const VoiceCardReply: React.FC<VoiceCardReplyProps> = ({ author, audioUrl }) => 
         </Text>
       </View>
       <View style={styles.audioContainer}>
-        <SoundWaves position={0} duration={2} waveCount={50} />
+        <SoundWaves waveCount={100} />
       </View>
       <TouchableOpacity onPress={() => togglePlayback(audioUrl)}>
-        <Ionicons name={isPlaying ? 'pause' : 'play'} size={30} color={COLORS.red} />
+        <Ionicons name={isActive ? 'pause' : 'play'} size={30} color={COLORS.red} />
       </TouchableOpacity>
     </View>
   );
