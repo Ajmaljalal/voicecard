@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '@/src/constants/Colors';
-import VoicePlayer from '@/src/components/voice-player/VoicePlayer';
+import VoicePlayer from '@/src/components/voicecard/VoicePlayer';
 import { useRouter } from 'expo-router';
 import VoiceCardFooter from './VoiceCardFooter';
 import SoundWaves from '../common/SoundWaves';

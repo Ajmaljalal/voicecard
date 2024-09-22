@@ -4,8 +4,10 @@ import { Alert } from 'react-native';
 import { uploadVoiceToFirebase } from '@/src/services/firebase/StorageService';
 import { useAddVoiceCardMutation } from '@/src/store/api/VoiceCardApi';
 import { VoiceCardInput } from '@/src/models/VoiceCard.Model';
+import { useUserLocation } from '@/src/hooks/useLocation';
 
 export const useAudioRecorder = (user: any, parentVoiceCardId: string | null) => {
+  const { userAddress } = useUserLocation()
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -65,16 +67,11 @@ export const useAudioRecorder = (user: any, parentVoiceCardId: string | null) =>
         id: user.authId,
         name: user.username,
       },
-      location: {
-        city: 'Sacramento', // TODO: Replace with actual location
-        state: 'CA', // TODO: Replace with actual location
-        country: 'USA', // TODO: Replace with actual location
-        zipcode: '95814',
-      },
+      location: userAddress,
       audioDuration: duration,
       audioUrl: audioUrl,
-      title: 'Reply Voice Card',
-      description: 'Reply to your voice card.',
+      title: 'New Voice Card',
+      description: 'This is a new voice card from the voice recorder.',
     };
 
     await addVoiceCard(newVoiceCard);

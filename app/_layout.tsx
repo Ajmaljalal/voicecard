@@ -14,7 +14,7 @@ import AuthService from '@/src/services/firebase/AuthService';
 import { auth } from '@/src/services/firebase/config';
 import { AudioProvider } from '@/src/context/AudioContext';
 import GlobalAudioPlayer from '@/src/components/common/GlobalAudioPlayer';
-
+import { useUserLocation } from '@/src/hooks/useLocation';
 const HeaderButton = ({ iconName, onPress }: { iconName: keyof typeof Ionicons.glyphMap, onPress: () => void }) => (
   <TouchableOpacity onPress={onPress}>
     <Ionicons name={iconName} size={24} color={COLORS.dark} />
@@ -23,12 +23,17 @@ const HeaderButton = ({ iconName, onPress }: { iconName: keyof typeof Ionicons.g
 
 
 function StackNavigator() {
-
+  const { initializeLocation } = useUserLocation();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [signOut] = useSignOutMutation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { data: user, refetch } = useGetCurrentUserQuery();
+
+  useEffect(() => {
+    initializeLocation();
+  }, [initializeLocation]);
+
 
   useEffect(() => {
     const checkAuthState = async () => {

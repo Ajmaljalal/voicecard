@@ -8,7 +8,7 @@ import { ModalName } from '@/src/constants/Modal';
 import { useGetCurrentUserQuery } from '@/src/store/api/AuthApi';
 import AuthService from '@/src/services/firebase/AuthService';
 import { COLORS } from '@/src/constants/Colors';
-
+import { useUserLocation } from '@/src/hooks/useLocation';
 interface VoiceRecordButtonProps {
   hasBorder?: boolean;
   size: number;
@@ -16,9 +16,9 @@ interface VoiceRecordButtonProps {
 }
 
 const VoiceRecordButton: React.FC<VoiceRecordButtonProps> = ({ size, parentVoiceCardId }) => {
-  const { data: currentUser, isLoading: isCurrentUserLoading } = useGetCurrentUserQuery();
-  const authUser = new AuthService().getCurrentUser()
   const dispatch = useAppDispatch()
+  const { data: currentUser, } = useGetCurrentUserQuery();
+  const authUser = new AuthService().getCurrentUser()
   const isAuth = !!currentUser || !!authUser
 
   const openVoiceRecordModal = () => {

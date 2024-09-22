@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../../constants/Colors';
-import VoicePlayer from '@/src/components/voice-player/VoicePlayer';
-import { VoiceCardProps } from './VoiceCard';
+import { COLORS } from '@/src/constants/Colors';
+import VoicePlayer from '@/src/components/voicecard/VoicePlayer';
+import { VoiceCardProps } from '@/src/components/voicecard/VoiceCard';
 import VoiceCardFooter from '@/src/components/voicecard/VoiceCardFooter';
-import VoiceCardRepliesList from '../voicecard-comment/VoiceCardCommentsList';
+import VoiceCardRepliesList from '@/src/components/voicecard-comment/VoiceCardCommentsList';
 import { useGetVoiceCardCommentsQuery } from '@/src/store/api/VoiceCardApi';
-import LoadingSpinner from '../common/LoadingSpinner';
-import SoundWaves from '../common/SoundWaves';
+import LoadingSpinner from '@/src/components/common/LoadingSpinner';
+import SoundWaves from '@/src/components/common/SoundWaves';
 
 const VoiceCardDetails: React.FC<VoiceCardProps> = ({ id, author, audioUrl, title, description }) => {
   const { data: replies, isLoading } = useGetVoiceCardCommentsQuery(id);

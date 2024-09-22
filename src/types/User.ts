@@ -6,3 +6,11 @@ export interface AppUser {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type Address = {
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode?: string;
+};

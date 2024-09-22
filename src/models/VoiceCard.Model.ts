@@ -1,3 +1,5 @@
+import { Address } from "../types/User";
+
 
 export interface VoiceCard {
   id: string;
@@ -5,12 +7,7 @@ export interface VoiceCard {
     id: string;
     name: string;
   };
-  location?: {
-    city: string;
-    state: string;
-    country: string;
-    zipcode: string;
-  };
+  location?: Address | null;
   audioUrl: string;
   title: string;
   description: string;
@@ -23,12 +20,7 @@ export interface VoiceCardInput {
     id: string;
     name: string;
   };
-  location?: {
-    city: string;
-    state: string;
-    country: string;
-    zipcode: string;
-  }
+  location: Address | null;
   audioUrl: string;
   title?: string;
   description?: string;
