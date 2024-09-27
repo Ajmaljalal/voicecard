@@ -69,7 +69,7 @@ export const useAudioRecorder = (user: any, parentVoiceCardId: string | null) =>
       },
       location: userAddress,
       audioDuration: duration,
-      audioUrl: audioUrl,
+      audioUrl: `${audioUrl}.m4a`,
       title: 'New Voice Card',
       description: 'This is a new voice card from the voice recorder.',
     };
